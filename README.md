@@ -1,7 +1,9 @@
 # Product-Traineeship-2024-URL-Shortner
 
 A full-fledged URL Shortener application built with [NestJS](https://nestjs.com/) and
-[PostgreSQL](https://www.postgresql.org/). This application allows users to shorten URLs and track analytics.
+[PostgreSQL](https://www.postgresql.org/). This application allows users to shorten URLs and track analytics of it.
+
+---
 
 ## Features
 
@@ -14,24 +16,23 @@ A full-fledged URL Shortener application built with [NestJS](https://nestjs.com/
   - Set Expiration Dates for URLs
   - Automatic Email Notification upon URL Expiration
   - Ownership-based Access Control (Users manage only their own URLs)
+  - Limit requests per IP to 5 requests/second
 - **Analytics**
   - Track Clicks, IP Addresses, and User Agents
   - Filter Analytics by Date Ranges
   - View Hit Counts per URL
-- **Rate Limiting**
-  - Limit requests per IP to 5 requests/second
-- **DevOps & Deployment**
+- **Containerization**
   - Containerized with Docker and Docker Compose
-  - PostgreSQL Database Running in a Docker Container
-  - CI/CD with GitHub Actions
+
+---
 
 ## Technology Stack
 
-- **Backend Framework:** [NestJS](https://nestjs.com/)
+- **Backend Framework:** [NestJS](https://nestjs.com/) with TypeScript
 - **Database & ORM:** [PostgreSQL](https://www.postgresql.org/) with [TypeORM](https://typeorm.io/)
-- **Containerization:** Docker & Docker Compose
-- **CI/CD:** GitHub Actions
-- **Linting & Code Quality:** ESLint, CodeClimate
+- **Containerization:** [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/)
+
+---
 
 ## Getting Started
 
@@ -74,64 +75,45 @@ These instructions will help you set up the development environment on your loca
 
 ### Running the Application
 
-1. **Start with Node**
+1.  **Start with Docker Compose**
 
-   For running this application without Docker, you need to have Nodejs and Postgresql database installed and running in
-   your machine. Once they are installed, you can follow the following instructions:
+    Running with Docker Compose will start both the application and the database in separate containers:
 
-   ```bash
-   yarn run start:dev
-   ```
+    ```bash
+    docker-compose up --build
+    ```
 
-   _or_
+    This will:
 
-   ```bash
-   npm run start:dev
-   ```
+    - Pull/Build a PostgreSQL database container.
+    - Build and start the NestJS application container.
 
-   This will:
+2.  **Start with Node**
 
-   - Build and start the NestJS application.
+    For running this application without Docker, you need to have Nodejs and Postgresql database installed and running
+    in your machine. Once they are installed, you can follow the following command to run the project:
 
-2. **Start with Docker Compose**
+    ```bash
+    yarn run start:dev
+    ```
 
-   Running with Docker Compose will start both the application and the database in separate containers:
+    _or_
 
-   ```bash
-   docker-compose up --build
-   ```
+    ```bash
+    npm run start:dev
+    ```
 
-   This will:
+    This will:
 
-   - Pull/Build a PostgreSQL database container.
-   - Build and start the NestJS application container.
+    - Build and start the NestJS application.
 
 **The application will be available at [http://localhost:3000](http://localhost:3000) or any other port specified in
 .env file.**
 
-3. **Accessing the API**
+**Accessing the API**
 
-   - **Postman Workspace:** Once running, you can test the APIs endpoints from this
-     [Postman Workspace](https://app.getpostman.com/join-team?invite_code=ae15f99f77c9b3340b4b06967e53ea8d&target_code=ebe49affb0f7da6c722a1e304af95d2d).
-     You might have to create a postman account before joining the workspace.
+- **Postman Workspace:** Once running, you can test the APIs endpoints from this
+  [Postman Workspace](https://app.getpostman.com/join-team?invite_code=ae15f99f77c9b3340b4b06967e53ea8d&target_code=ebe49affb0f7da6c722a1e304af95d2d).
+  You might have to create a postman account before joining the workspace.
 
-### API Endpoints
-
-**Authentication & User Management:**
-
-- `POST /auth/signup` - Register a new user
-- `POST /auth/login` - Authenticate user and receive a JWT
-- `GET /users/me` - Get the authenticated user's profile
-
-**URL Management:**
-
-- `POST /urls` - Create a new shortened URL
-- `GET /urls` - List user’s shortened URLs
-- `GET /urls/{id}` - View details of a specific URL
-- `PATCH /urls/{id}` - Update URL details
-- `DELETE /urls/{id}` - Delete a shortened URL
-
-**Redirection & Analytics:**
-
-- `GET /{shortCode}` - Redirect to the original URL
-- `GET /urls/{id}/analytics` - View analytics for a specific URL
+---
