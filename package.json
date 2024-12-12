@@ -37,6 +37,8 @@
 		"typeorm": "^0.3.20"
 	},
 	"devDependencies": {
+		"@commitlint/cli": "^19.6.0",
+		"@commitlint/config-conventional": "^19.6.0",
 		"@nestjs/cli": "^10.0.0",
 		"@nestjs/schematics": "^10.0.0",
 		"@types/bcrypt": "^5.0.2",
