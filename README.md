@@ -1,4 +1,6 @@
-# Product-Traineeship-2024-URL-Shortner
+# URL-Shortner
+
+## Product Traineeship 2024
 
 A full-fledged URL Shortener application built with [NestJS](https://nestjs.com/) and
 [PostgreSQL](https://www.postgresql.org/). This application allows users to shorten URLs and track analytics of it.
