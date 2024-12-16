@@ -11,5 +11,5 @@ export const dataBaseConfigurations = {
 	synchronize: false, // Should be false in production to use migrations
 	logging: true,
 	entities: [join(__dirname, '/../entities', '*.entity.{ts,js}')],
-	migrations: [join('__dirname', '/../migrations', '*.{ts,js}')],
+	migrations: [join(__dirname, '/../migrations', '*.{ts,js}')],
 };
