@@ -1,8 +1,8 @@
 FROM node:20-alpine
-USER root
+USER node
 WORKDIR /usr/local/app
 COPY package.json .
-RUN yarn
+RUN yarn install --ignore-scripts
 EXPOSE ${APP_PORT}
 COPY . .
 CMD ["yarn","run","start:dev"]
