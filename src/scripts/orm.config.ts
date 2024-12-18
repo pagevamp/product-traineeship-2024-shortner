@@ -1,8 +1,6 @@
-import { config } from 'dotenv';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { DataSource, DataSourceOptions } from 'typeorm';
-config();
 
 const dataBaseConfigurations = {
 	type: 'postgres',
