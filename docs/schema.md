@@ -33,8 +33,8 @@ This schema is for storing the various analytical records of a particular shorte
 click on a shortened URL.
 
 - Table name: redirection_logs.
-- Attributes: id, short_url_id, clicked_at, ip_address, user_agent, user_browser, user_device, user_platform.
-  - user_agent entity holds the raw user-agent information wile user_browser and user_device store the parsed respective
+- Attributes: id, short_url_id, clicked_at, ip_address, user_agent, browser, device, platform.
+  - user_agent entity holds the raw user-agent information wile browser and device store the parsed respective
     information obtained from user-agent header.
 - Relationships: Each click record is associated with exactly one shortened URL.
 
