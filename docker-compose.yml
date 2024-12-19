@@ -1,5 +1,5 @@
 services:
-  postgresc:
+  postgres:
     image: 'postgres'
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -19,9 +19,9 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     depends_on:
-      postgresc:
+      postgres:
         condition: service_healthy
     environment:
       DB_HOST: ${DB_HOST}

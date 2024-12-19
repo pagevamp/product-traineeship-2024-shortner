@@ -4,5 +4,5 @@ WORKDIR /usr/local/app
 COPY package.json .
 RUN yarn install --ignore-scripts
 EXPOSE ${APP_PORT}
-COPY . .
+COPY . . 
 CMD ["yarn","run","start:dev"]
