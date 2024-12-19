@@ -8,13 +8,12 @@ import { DataSource, DataSourceOptions, TypeORMError } from 'typeorm';
 		TypeOrmModule.forRootAsync({
 			useFactory: () => {
 				return {
-					host: process.env.HOST,
+					host: process.env.DB_HOST,
 					...dataBaseConfigurations,
 				} as TypeOrmModuleOptions;
 			},
 			dataSourceFactory: async (options: DataSourceOptions) => {
 				try {
-					console.log('----- Connecting to DataBase ------');
 					const dataSource = await new DataSource(options).initialize();
 					console.log(' ------ Connected to Database successfully -----');
 					return dataSource;
