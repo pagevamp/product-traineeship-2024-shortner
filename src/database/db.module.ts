@@ -2,13 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { dataBaseConfigurations } from 'src/scripts/orm.config';
 import { DataSource, DataSourceOptions, TypeORMError } from 'typeorm';
+import { envVariables } from '@/config/env.config';
 
 @Module({
 	imports: [
 		TypeOrmModule.forRootAsync({
 			useFactory: () => {
 				return {
-					host: process.env.DB_HOST,
+					host: envVariables.DB_HOST,
 					...dataBaseConfigurations,
 				} as TypeOrmModuleOptions;
 			},

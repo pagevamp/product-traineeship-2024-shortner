@@ -1,6 +1,4 @@
-import { config } from 'dotenv';
 import { z } from 'zod';
-config();
 export const envVariables = {
 	POSTGRES_DB: process.env.POSTGRES_DB,
 	POSTGRES_USER: process.env.POSTGRES_USER,
