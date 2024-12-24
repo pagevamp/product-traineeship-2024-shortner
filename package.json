@@ -13,7 +13,12 @@
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
 		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-		"prepare": "husky"
+		"prepare": "husky",
+		"pretypeorm": "(rm ormconfig.json || :) && ts-node -r tsconfig-paths/register  src/scripts/orm.config.ts",
+		"typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+		"typeorm:migration:create": "yarn run typeorm -- migration:create src/migrations/my_init",
+		"typeorm:migration:generate": "yarn run typeorm -- migration:generate -d src/scripts/orm.config.ts src/migrations/my_init  ",
+		"typeorm:migration:run": "yarn run typeorm -- migration:run  -d src/scripts/orm.config.ts"
 	},
 	"lint-staged": {
 		"src/**/*.{ts,tsx}": [
