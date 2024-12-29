@@ -1,5 +1,7 @@
 import { z } from 'zod';
-export const envVariables = {
+import { config } from 'dotenv';
+config();
+export const env = {
 	POSTGRES_DB: process.env.POSTGRES_DB,
 	POSTGRES_USER: process.env.POSTGRES_USER,
 	POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
@@ -13,7 +15,7 @@ export const envVariables = {
 	EMAIL_PORT: +(process.env.EMAIL_PORT || 587),
 } as const;
 
-enum APP_ENVIRONVENT {
+export enum APP_ENVIRONVENT {
 	DEVELOPMENT = 'development',
 	PRODUCTION = 'production',
 }
@@ -39,8 +41,10 @@ const validationSchema = z
 	})
 	.required();
 
-export const validate = (): object => {
-	const value = validationSchema.safeParse(envVariables);
+type ValidationSchema = z.infer<typeof validationSchema>;
+
+export const validate = (): ValidationSchema => {
+	const value = validationSchema.safeParse(env);
 	if (!value.success) {
 		throw new Error(`---${value.error.issues[0].path} :: ${value.error.issues[0].message.toUpperCase()}---`);
 	}
