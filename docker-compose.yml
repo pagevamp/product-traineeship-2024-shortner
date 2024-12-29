@@ -31,6 +31,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       APP_PORT: ${APP_PORT}
       NODE_ENV: ${NODE_ENV}
+      EMAIL_SERVICE: ${EMAIL_SERVICE}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+
     ports:
       - ${APP_PORT}:${APP_PORT}
     networks:
