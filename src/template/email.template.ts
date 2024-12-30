@@ -1,9 +1,14 @@
 export const signupOtpMailTemplate = {
 	subject: 'Verify your account',
-	body: (code: number, user: string): string => `
+	/**
+	 * Generates a random OTP of the specified size.
+	 * @param otpCode - code to send to through email.
+	 * @param userName - name of the user to send the email to.
+	 */
+	body: (otpCode: number, userName: string): string => `
     <div>
-    <p>Welcome ${user}</p>
-    <p>Use this code to verify your account:<br><b>${code}</b>
+    <p>Welcome ${userName}</p>
+    <p>Use this code to verify your account:<br><b>${otpCode}</b>
     </div>
     `,
 };
