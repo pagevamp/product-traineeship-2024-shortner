@@ -1,6 +1,6 @@
 import { createTransport, SendMailOptions, Transporter } from 'nodemailer';
 import { Logger } from '@nestjs/common';
-import { MailerDto } from './dto/mailer.dto';
+import { MailerDto } from '@/mailer/dto/mailer.dto';
 
 export class MailerService {
 	private readonly logger = new Logger();
@@ -14,24 +14,23 @@ export class MailerService {
 		},
 	});
 
-	async sendEmail(data: MailerDto): Promise<boolean | string> {
-		const { sender, recipients, subject, html, text } = data;
-		const mailOptions: SendMailOptions = {
-			from: sender ?? {
-				name: process.env.EMAIL_SENDER_NAME as string,
-				address: process.env.EMAIL_USER as string,
-			},
-			to: recipients,
-			subject,
-			html,
-			text,
-		};
+	async sendEmail(data: MailerDto): Promise<void> {
 		try {
+			const { sender, recipients, subject, html, text } = data;
+			const mailOptions: SendMailOptions = {
+				from: sender ?? {
+					name: process.env.EMAIL_SENDER_NAME as string,
+					address: process.env.EMAIL_USER as string,
+				},
+				to: recipients,
+				subject,
+				html,
+				text,
+			};
 			await this.transporter.sendMail(mailOptions);
 			this.logger.log('Mail sent successfully');
-			return true;
 		} catch (error) {
-			throw Error(error);
+			this.logger.error(`Error sending email:`, { error });
 		}
 	}
 }
