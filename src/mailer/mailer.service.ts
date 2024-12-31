@@ -16,13 +16,13 @@ export class MailerService {
 
 	async sendEmail(data: MailerDto): Promise<void> {
 		try {
-			const { sender, recipients, subject, html, text } = data;
+			const { to, subject, html, text } = data;
 			const mailOptions: SendMailOptions = {
-				from: sender ?? {
+				from: {
 					name: process.env.EMAIL_SENDER_NAME as string,
 					address: process.env.EMAIL_USER as string,
 				},
-				to: recipients,
+				to,
 				subject,
 				html,
 				text,
@@ -30,7 +30,7 @@ export class MailerService {
 			await this.transporter.sendMail(mailOptions);
 			this.logger.log('Mail sent successfully');
 		} catch (error) {
-			this.logger.error(`Error sending email:`, { error });
+			this.logger.error(`Error sending mail: ${error}`);
 		}
 	}
 }
