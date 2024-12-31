@@ -9,7 +9,7 @@ const dataBaseConfigurations = {
 	username: env.POSTGRES_USER,
 	password: env.POSTGRES_PASSWORD,
 	database: env.POSTGRES_DB,
-	synchronize: env.NODE_ENV === APP_ENVIRONVENT.PRODUCTION ? false : true, // Should be false in production to use migrations
+	synchronize: env.NODE_ENV === APP_ENVIRONVENT.DEVELOPMENT, // Should be false in production to use migrations
 	logging: true,
 	entities: [join(__dirname, '/../entities', '*.entity.{ts,js}')],
 	migrations: [join(__dirname, '/../migrations', '*.{ts,js}')],
