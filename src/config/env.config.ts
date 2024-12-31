@@ -25,7 +25,7 @@ enum SMTP_PORTS {
 	DEFAULT = 587,
 	TLS = 465,
 }
-const validationSchema = z
+const envSchema = z
 	.object({
 		POSTGRES_DB: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		POSTGRES_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
@@ -41,10 +41,10 @@ const validationSchema = z
 	})
 	.required();
 
-type ValidationSchema = z.infer<typeof validationSchema>;
+type EnvSchema = z.infer<typeof envSchema>;
 
-export const validate = (): ValidationSchema => {
-	const value = validationSchema.safeParse(env);
+export const validate = (): EnvSchema => {
+	const value = envSchema.safeParse(env);
 	if (!value.success) {
 		throw new Error(`---${value.error.issues[0].path} :: ${value.error.issues[0].message.toUpperCase()}---`);
 	}
