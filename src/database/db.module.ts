@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { dataBaseConfigurations } from '@/scripts/orm.config';
+import { dataBaseConfigurations } from '@/database/db.config';
 import { DataSource, DataSourceOptions, TypeORMError } from 'typeorm';
 import { env } from '@/config/env.config';
 

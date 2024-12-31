@@ -1,0 +1,15 @@
+{
+  "type": "postgres",
+  "port": 5432,
+  "username": "trainee",
+  "password": "root9996",
+  "database": "url_shortener",
+  "synchronize": true,
+  "logging": true,
+  "entities": [
+    "/home/sanzay/Outside/product-traineeship-2024-shortner/src/entities/*.entity.{ts,js}"
+  ],
+  "migrations": [
+    "/home/sanzay/Outside/product-traineeship-2024-shortner/src/migrations/*.{ts,js}"
+  ]
+}
