@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataBaseConfigurations } from '@/database/db.config';
 import { DataSource, DataSourceOptions, TypeORMError } from 'typeorm';
 import { env } from '@/config/env.config';
@@ -11,7 +11,7 @@ import { env } from '@/config/env.config';
 				return {
 					host: env.DB_HOST,
 					...dataBaseConfigurations,
-				} as TypeOrmModuleOptions;
+				};
 			},
 			dataSourceFactory: async (options: DataSourceOptions) => {
 				try {

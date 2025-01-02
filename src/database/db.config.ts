@@ -1,9 +1,10 @@
 import { env, APP_ENVIRONVENT } from '@/config/env.config';
 import { join } from 'path';
 import { config } from 'dotenv';
+import { DataSourceOptions } from 'typeorm';
 config();
 
-export const dataBaseConfigurations = {
+export const dataBaseConfigurations: DataSourceOptions = {
 	type: 'postgres',
 	port: +env.POSTGRES_PORT,
 	username: env.POSTGRES_USER,
