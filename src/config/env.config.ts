@@ -18,6 +18,9 @@ export const env = {
 	REDIS_PASSWORD: process.env.REDIS_PASSWORD,
 	REDIS_HOST: process.env.REDIS_HOST,
 	REDIS_PORT: +(process.env.REDIS_PORT || 6379),
+	JWT_SECRET: process.env.JWT_SECRET,
+	JWT_EXPIRATION: process.env.JWT_EXPIRATION,
+	SALT_ROUND: +(process.env.SALT_ROUND || 10),
 } as const;
 
 export enum APP_ENVIRONVENT {
@@ -48,6 +51,9 @@ const envSchema = z
 		REDIS_PASSWORD: z.string(),
 		REDIS_PORT: z.number().gt(0, { message: 'Port cannot be empty' }),
 		REDIS_HOST: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
+		JWT_SECRET: z.string().min(5, { message: 'JWT secret key cannot be smaller than 5' }),
+		JWT_EXPIRATION: z.string().min(1, { message: 'JWT_EXPIRATION time cannot be empty' }),
+		SALT_ROUND: z.coerce.number().default(10),
 	})
 	.required();
 
