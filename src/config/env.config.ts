@@ -13,6 +13,9 @@ export const env = {
 	EMAIL_PASS: process.env.EMAIL_PASS,
 	EMAIL_USER: process.env.EMAIL_USER,
 	EMAIL_PORT: +(process.env.EMAIL_PORT || 587),
+	JWT_SECRET: process.env.JWT_SECRET,
+	JWT_EXPIRATION: process.env.JWT_EXPIRATION,
+	SALT_ROUND: +(process.env.SALT_ROUND || 10),
 } as const;
 
 export enum APP_ENVIRONVENT {
@@ -38,6 +41,9 @@ const envSchema = z
 		EMAIL_PORT: z.nativeEnum(SMTP_PORTS),
 		EMAIL_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		EMAIL_PASS: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
+		JWT_SECRET: z.string().min(5, { message: 'JWT secret key cannot be smaller than 5' }),
+		JWT_EXPIRATION: z.string().min(1, { message: 'JWT_EXPIRATION time cannot be empty' }),
+		SALT_ROUND: z.coerce.number().default(10),
 	})
 	.required();
 
