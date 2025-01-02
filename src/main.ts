@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from '@/app.module';
+import { env } from '@/config/env.config';
 
 async function bootstrap(): Promise<void> {
 	const app = await NestFactory.create(AppModule);
-
-	await app.listen(process.env.APP_PORT ?? 3000, () => {
-		console.info('Listening to server....');
-		console.info(`Server listening at port http://localhost:${process.env.APP_PORT}`);
+	const port = env.APP_PORT;
+	await app.listen(port, () => {
+		console.info(`${env.NODE_ENV?.toLocaleUpperCase()} Server listening at port ${port}`);
 	});
 }
 
