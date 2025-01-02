@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataBaseConfigurations } from '@/database/db.config';
 import { DataSource, DataSourceOptions, TypeORMError } from 'typeorm';
 import { env } from '@/config/env.config';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger();
 
 @Module({
 	imports: [
@@ -16,7 +19,7 @@ import { env } from '@/config/env.config';
 			dataSourceFactory: async (options: DataSourceOptions) => {
 				try {
 					const dataSource = await new DataSource(options).initialize();
-					console.log(' ------ Connected to Database successfully -----');
+					logger.log(' ------ Connected to Database successfully -----');
 					return dataSource;
 				} catch (error) {
 					throw new TypeORMError(`Error Connection to database , "${error}"`);
