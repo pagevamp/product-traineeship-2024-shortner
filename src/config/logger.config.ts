@@ -1,5 +1,7 @@
 import { format, transports } from 'winston';
-const isProduction = process.env.APP_ENV === 'production';
+import { env } from '@/config/env.config';
+
+const isProduction = env.NODE_ENV === 'production';
 export const loggerConfig = {
 	format: format.combine(
 		format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
