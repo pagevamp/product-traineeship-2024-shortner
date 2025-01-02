@@ -12,6 +12,7 @@ export const env = {
 	EMAIL_HOST: process.env.EMAIL_HOST,
 	EMAIL_PASS: process.env.EMAIL_PASS,
 	EMAIL_USER: process.env.EMAIL_USER,
+	EMAIL_SENDER_NAME: process.env.EMAIL_SENDER_NAME,
 	EMAIL_PORT: +(process.env.EMAIL_PORT || 587),
 } as const;
 
@@ -38,6 +39,7 @@ const envSchema = z
 		EMAIL_PORT: z.nativeEnum(SMTP_PORTS),
 		EMAIL_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		EMAIL_PASS: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
+		EMAIL_SENDER_NAME: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 	})
 	.required();
 
