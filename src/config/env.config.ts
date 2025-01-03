@@ -14,6 +14,10 @@ export const env = {
 	EMAIL_USER: process.env.EMAIL_USER,
 	EMAIL_SENDER_NAME: process.env.EMAIL_SENDER_NAME,
 	EMAIL_PORT: +(process.env.EMAIL_PORT || 587),
+	REDIS_USERNAME: process.env.REDIS_USERNAME,
+	REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+	REDIS_HOST: process.env.REDIS_HOST,
+	REDIS_PORT: +(process.env.REDIS_PORT || 6379),
 } as const;
 
 export enum APP_ENVIRONVENT {
@@ -40,6 +44,10 @@ const envSchema = z
 		EMAIL_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		EMAIL_PASS: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		EMAIL_SENDER_NAME: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
+		REDIS_USERNAME: z.string(),
+		REDIS_PASSWORD: z.string(),
+		REDIS_PORT: z.number().gt(0, { message: 'Port cannot be empty' }),
+		REDIS_HOST: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 	})
 	.required();
 

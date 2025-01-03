@@ -4,17 +4,25 @@ import { WinstonModule } from 'nest-winston';
 import { loggerConfig } from '@/config/logger.config';
 import { Logger } from '@nestjs/common';
 import { env } from '@/config/env.config';
+import { redisClient } from '@/config/redis.config';
 
 async function bootstrap(): Promise<void> {
 	const logger = new Logger();
 	const port = env.APP_PORT;
-	const app = await NestFactory.create(AppModule, {
-		// this will overwrite the default logger of nestJS with custom winston logger
-		logger: WinstonModule.createLogger(loggerConfig),
-	});
-	await app.listen(port, () => {
-		logger.log(`App is listening on port ${port}`);
-	});
+	try {
+		const app = await NestFactory.create(AppModule, {
+			logger: WinstonModule.createLogger(loggerConfig),
+		});
+
+		await redisClient.connect();
+		logger.log('Connected to Redis');
+
+		await app.listen(port, () => {
+			logger.log(`App is listening on port ${port}`);
+		});
+	} catch (error) {
+		logger.error(error);
+	}
 }
 
 bootstrap();
