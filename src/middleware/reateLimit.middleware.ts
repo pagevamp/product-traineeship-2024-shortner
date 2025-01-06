@@ -6,14 +6,13 @@ import { RedisStore } from 'rate-limit-redis';
 import { redisClient } from '@/config/redis.config';
 
 interface RateLimitConfig {
-	windowMs?: number;
-	max?: number;
+	windowMs: number;
+	max: number;
 }
 
 @Injectable()
 export class RateLimitMiddlewareFactory {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	static create(config: RateLimitConfig): any {
+	static create(config: RateLimitConfig): new () => NestMiddleware {
 		@Injectable()
 		class CustomRateLimit implements NestMiddleware {
 			private limiter = rateLimit({
