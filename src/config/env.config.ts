@@ -60,7 +60,7 @@ const envSchema = z
 type EnvSchema = z.infer<typeof envSchema>;
 
 export const validate = (): EnvSchema => {
-	const value = envSchema.safeParse(process.env);
+	const value = envSchema.safeParse(env);
 	if (!value.success) {
 		throw new Error(`---${value.error.issues[0].path} :: ${value.error.issues[0].message.toUpperCase()}---`);
 	}
