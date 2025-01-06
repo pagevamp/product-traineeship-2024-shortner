@@ -15,11 +15,11 @@ export class User {
 	name: string;
 
 	@Column({ type: 'date', default: null })
-	verifiedAt: Date;
+	verified_at: Date;
 
 	@Column({ type: 'date' })
-	createdAt: Date;
+	created_at: Date;
 
 	@Column({ type: 'date' })
-	updatedAt: Date;
+	updated_at: Date;
 }
