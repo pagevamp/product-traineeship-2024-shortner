@@ -17,9 +17,9 @@ export class User {
 	@Column({ type: 'date', default: null })
 	verifiedAt: Date;
 
-	@Column({ type: 'date', default: new Date() })
+	@Column({ type: 'date' })
 	createdAt: Date;
 
-	@Column({ type: 'date', default: new Date() })
+	@Column({ type: 'date' })
 	updatedAt: Date;
 }

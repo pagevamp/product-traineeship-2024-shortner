@@ -16,7 +16,7 @@ export class UsersService {
 	async create(createUserDto: CreateUserDto): Promise<SuccessResponse | undefined> {
 		try {
 			const passwordHash = await bcrypt.hash(createUserDto.password, env.SALT_ROUND);
-			const user = { ...createUserDto, password_hash: passwordHash };
+			const user = { ...createUserDto, password_hash: passwordHash, createdAt: new Date(), updatedAt: new Date() };
 			const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
 			if (createdUser) {
 				return {
