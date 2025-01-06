@@ -1,9 +1,9 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { Verification } from './entities/verification.entity';
 import { MoreThan, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { generateOtp } from './util/otp.util';
-import bcrypt from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 
 @Injectable()
 export class VerificationService {
@@ -27,7 +27,7 @@ export class VerificationService {
 			);
 		}
 		const otp = generateOtp(size);
-		const hashedCode = await bcrypt.hash(otp, 10);
+		const hashedCode = await hash(otp, 10);
 		const otpEntity = this.otpRepository.create({
 			user_id,
 			otp_code: hashedCode,
@@ -42,7 +42,11 @@ export class VerificationService {
 		const validOtp = await this.otpRepository.findOne({
 			where: { user_id, expires_at: MoreThan(new Date()) },
 		});
-		if (validOtp && (await bcrypt.compare(otp, validOtp.otp_code))) {
+		if (!validOtp) {
+			throw new NotFoundException('OTP code not found.');
+		}
+		const deHashedOtp = await compare(otp, validOtp.otp_code);
+		if (validOtp && deHashedOtp) {
 			await this.otpRepository.remove(validOtp);
 			return true;
 		} else {
