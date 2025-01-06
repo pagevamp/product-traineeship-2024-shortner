@@ -17,8 +17,9 @@ export class UsersService {
 		try {
 			const passwordHash = await bcrypt.hash(createUserDto.password, env.SALT_ROUND);
 			const user = { ...createUserDto, password_hash: passwordHash };
-			const isCreated = await this.userModel.insert(user);
-			if (isCreated) {
+			const createdUser = (await this.userModel.insert(user)).generatedMaps[0];
+			console.log(createdUser);
+			if (createdUser) {
 				return {
 					status: HttpStatus.CREATED,
 					message: success_message.user_created,
