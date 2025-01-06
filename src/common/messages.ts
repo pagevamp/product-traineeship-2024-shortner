@@ -4,5 +4,5 @@ export const successMessage = {
 };
 
 export const errorMessage = {
-	password_length: 'Must be atleast 5 characters long.',
+	length_validation: 'Must be atleast 5 characters long.',
 };
