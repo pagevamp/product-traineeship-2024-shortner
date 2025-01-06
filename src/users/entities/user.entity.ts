@@ -14,6 +14,12 @@ export class User {
 	@Column()
 	name: string;
 
-	@Column({ default: false })
-	is_verified: boolean;
+	@Column({ type: 'date', default: null })
+	verifiedAt: Date;
+
+	@Column({ type: 'date', default: new Date() })
+	createdAt: Date;
+
+	@Column({ type: 'date', default: new Date() })
+	updatedAt: Date;
 }

@@ -11,13 +11,13 @@ import { successMessage } from '@/common/messages';
 export class UsersService {
 	constructor(
 		@InjectRepository(User)
-		private userModel: Repository<User>,
+		private userRepository: Repository<User>,
 	) {}
 	async create(createUserDto: CreateUserDto): Promise<SuccessResponse | undefined> {
 		try {
 			const passwordHash = await bcrypt.hash(createUserDto.password, env.SALT_ROUND);
 			const user = { ...createUserDto, password_hash: passwordHash };
-			const createdUser = (await this.userModel.insert(user)).generatedMaps[0];
+			const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
 			console.log(createdUser);
 			if (createdUser) {
 				return {
