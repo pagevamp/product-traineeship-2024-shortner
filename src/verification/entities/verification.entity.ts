@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
 @Entity('email_codes')
@@ -9,7 +9,8 @@ export class Verification {
 	@Column()
 	user_id: string;
 
-	@ManyToOne(() => User, (users) => users.id)
+	@ManyToOne(() => User)
+	@JoinColumn({ name: 'user_id' })
 	user: User;
 
 	@Column()
