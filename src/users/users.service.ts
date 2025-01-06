@@ -6,7 +6,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { SuccessResponse } from '@/common/response.interface';
-import { success_message } from '@/common/messages';
+import { successMessage } from '@/common/messages';
 @Injectable()
 export class UsersService {
 	constructor(
@@ -22,7 +22,7 @@ export class UsersService {
 			if (createdUser) {
 				return {
 					status: HttpStatus.CREATED,
-					message: success_message.user_created,
+					message: successMessage.user_created,
 				};
 			}
 		} catch (error) {

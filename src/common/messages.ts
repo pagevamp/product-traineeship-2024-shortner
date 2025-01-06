@@ -1,8 +1,8 @@
-export const success_message = {
+export const successMessage = {
 	user_created: 'User has been created successfully',
 	user_fetched: 'User has been fetched successgully',
 };
 
-export const error_message = {
-	password_length: 'Password must be atleast 5 characters long.',
+export const errorMessage = {
+	password_length: 'Must be atleast 5 characters long.',
 };
