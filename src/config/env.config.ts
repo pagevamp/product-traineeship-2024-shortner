@@ -38,12 +38,12 @@ const envSchema = z
 		POSTGRES_DB: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		POSTGRES_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		POSTGRES_PASSWORD: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		POSTGRES_PORT: z.number().gt(0, { message: 'Port cannot be empty' }),
+		POSTGRES_PORT: z.coerce.number().gt(0, { message: 'Port cannot be empty' }).default(5432),
 		DB_HOST: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		APP_PORT: z.number().gt(0, { message: 'Port cannot be empty' }),
+		APP_PORT: z.coerce.number().gt(0, { message: 'Port cannot be empty' }).default(3000),
 		NODE_ENV: z.nativeEnum(APP_ENVIRONVENT),
 		EMAIL_HOST: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		EMAIL_PORT: z.nativeEnum(SMTP_PORTS),
+		EMAIL_PORT: z.nativeEnum(SMTP_PORTS).default(587),
 		EMAIL_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		EMAIL_PASS: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
 		EMAIL_SENDER_NAME: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
@@ -60,7 +60,7 @@ const envSchema = z
 type EnvSchema = z.infer<typeof envSchema>;
 
 export const validate = (): EnvSchema => {
-	const value = envSchema.safeParse(env);
+	const value = envSchema.safeParse(process.env);
 	if (!value.success) {
 		throw new Error(`---${value.error.issues[0].path} :: ${value.error.issues[0].message.toUpperCase()}---`);
 	}
