@@ -1,6 +1,6 @@
 export const successMessage = {
 	user_created: 'User has been created successfully',
-	user_fetched: 'User has been fetched successgully',
+	user_fetched: 'User has been fetched successfully',
 };
 
 export const errorMessage = {

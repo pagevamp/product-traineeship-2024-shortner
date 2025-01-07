@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -14,12 +14,15 @@ export class User {
 	@Column()
 	name: string;
 
-	@Column({ type: 'date', default: null })
+	@Column({ type: 'timestamp without time zone', default: null })
 	verified_at: Date;
 
-	@Column({ type: 'date' })
+	@CreateDateColumn({ type: 'timestamp without time zone' })
 	created_at: Date;
 
-	@Column({ type: 'date' })
+	@UpdateDateColumn({ type: 'timestamp without time zone' })
 	updated_at: Date;
+
+	@DeleteDateColumn({ nullable: true })
+	deleted_at?: Date;
 }
