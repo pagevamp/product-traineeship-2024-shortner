@@ -1,7 +1,7 @@
-import { env, APP_ENVIRONVENT } from '@/config/env.config';
+import { env } from '@/config/env.config';
 import { join } from 'path';
 import { config } from 'dotenv';
-import { DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 config();
 
 export const dataBaseConfigurations: DataSourceOptions = {
@@ -10,8 +10,9 @@ export const dataBaseConfigurations: DataSourceOptions = {
 	username: env.POSTGRES_USER,
 	password: env.POSTGRES_PASSWORD,
 	database: env.POSTGRES_DB,
-	synchronize: env.NODE_ENV === APP_ENVIRONVENT.DEVELOPMENT, // Should be false in production to use migrations
+	synchronize: false,
 	logging: true,
-	entities: [join(__dirname, '/../entities', '*.entity.{ts,js}')],
-	migrations: [join(__dirname, '/../migrations', '*.{ts,js}')],
+	entities: [join(__dirname, '/../**/entities', '*.entity.{ts,js}')],
+	migrations: [join(__dirname, '/../database/migrations', '*.{ts,js}')],
 };
+export const dataSource = new DataSource(dataBaseConfigurations);
