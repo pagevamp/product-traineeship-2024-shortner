@@ -8,7 +8,7 @@ export class MailerService {
 	transporter: Transporter = createTransport({
 		host: env.EMAIL_HOST,
 		port: env.EMAIL_PORT,
-		secure: true,
+		secure: env.NODE_ENV === 'production',
 
 		auth: {
 			user: env.EMAIL_USER,
