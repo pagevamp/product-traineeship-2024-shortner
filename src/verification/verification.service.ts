@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-import { Verification } from './entities/verification.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { HttpException, HttpStatus, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { generateOtp } from './util/otp.util';
+import { MoreThan, Repository } from 'typeorm';
 import { hash, compare } from 'bcrypt';
+import { env } from '@/config/env.config';
+import { Verification } from '@/verification/entities/verification.entity';
+import { generateOtp } from '@/verification/util/otp.util';
+import { errorMessage } from '@/common/messages';
 
 @Injectable()
 export class VerificationService {
@@ -14,7 +16,7 @@ export class VerificationService {
 		private otpRepository: Repository<Verification>,
 	) {}
 
-	async createOtp(user_id: string, size = 6): Promise<string> {
+	async createOtp(user_id: string): Promise<string> {
 		const recentOtpRequest = await this.otpRepository.findOne({
 			where: {
 				user_id,
@@ -22,12 +24,13 @@ export class VerificationService {
 			},
 		});
 		if (recentOtpRequest) {
-			throw new UnprocessableEntityException(
+			throw new HttpException(
 				`Please wait ${this.minutesToMakeNewOtpRequest} minutes to make new request.`,
+				HttpStatus.TOO_MANY_REQUESTS,
 			);
 		}
-		const otp = generateOtp(size);
-		const hashedOtp = await hash(otp, 10);
+		const otp = generateOtp();
+		const hashedOtp = await hash(otp, env.SALT_ROUND);
 		const saveOtp = this.otpRepository.create({
 			user_id,
 			otp_code: hashedOtp,
@@ -43,10 +46,13 @@ export class VerificationService {
 			where: { user_id, expires_at: MoreThan(new Date()) },
 		});
 		if (!validOtp) {
-			throw new NotFoundException('Invalid or expired OTP.');
+			throw new UnprocessableEntityException(errorMessage.invalidOrExpiredOtp);
 		}
-		const deHashedOtp = await compare(otp, validOtp.otp_code);
-		if (validOtp && deHashedOtp) {
+		const result = await compare(otp, validOtp.otp_code);
+		if (!result) {
+			throw new UnprocessableEntityException(errorMessage.invalidOrExpiredOtp);
+		}
+		if (validOtp && result) {
 			await this.otpRepository.remove(validOtp);
 			return true;
 		} else {
