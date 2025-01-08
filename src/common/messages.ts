@@ -5,4 +5,5 @@ export const successMessage = {
 
 export const errorMessage = {
 	lengthValidation: 'Must be atleast 5 characters long.',
+	invalidOrExpiredOtp: 'Invalid or expired OTP',
 };
