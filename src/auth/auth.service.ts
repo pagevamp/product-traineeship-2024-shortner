@@ -2,6 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '@/users/users.service';
+import { TokenResponse } from '@/common/response.interface';
+import { errorMessage } from '@/common/messages';
 
 @Injectable()
 export class AuthService {
@@ -9,30 +12,25 @@ export class AuthService {
 		private userService: UsersService,
 		private jwtService: JwtService,
 	) {}
-
-	//create a seperate response type for this function return.
-	//For now keeping object **must be changed**
-	async login(loginDto: LoginDto): Promise<object> {
+	async login(loginDto: LoginDto): Promise<TokenResponse | undefined> {
 		const { email, password } = loginDto;
 		const user = await this.userService.findByEmail(email);
-		if (!user) {
-			throw new Error('User not found');
-		}
-		const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+		const { id, name, verified_at, password_hash } = user;
+		const isPasswordValid = await bcrypt.compare(password, password_hash);
 		if (!isPasswordValid) {
-			throw new UnauthorizedException('invalid credentials');
+			throw new UnauthorizedException(errorMessage.invalidCredentials);
 		}
-
-		//change error message after main branch gets updated
-
-		const { name, is_verified } = user;
+		// if (!verified_at) {
+		// 	throw new UnauthorizedException(errorMessage.notVerified);
+		// }
 		const payload = {
+			id,
 			email,
 			name,
-			is_verified,
+			verifiedAt: verified_at,
 		};
 		return {
-			access_token: await this.jwtService.signAsync(payload),
+			accessToken: await this.jwtService.signAsync(payload),
 		};
 	}
 }

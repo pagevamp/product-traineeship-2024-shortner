@@ -6,3 +6,7 @@ export interface SuccessResponse {
 export interface GetMethodResponse extends SuccessResponse {
 	data: object[];
 }
+
+export interface TokenResponse {
+	accessToken: string;
+}
