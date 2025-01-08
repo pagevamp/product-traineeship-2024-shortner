@@ -4,8 +4,10 @@ export const successMessage = {
 };
 
 export const errorMessage = {
-	notFound: 'Data not found.',
-	lengthValidation: 'Must be atleast 5 characters long.',
+	userCreationFailure: 'User not created',
+	userNotFound: 'User not found.',
+	pwdLengthValidation: 'Must be atleast 5 characters long.',
 	invalidCredentials: 'Invalid Credentials',
 	notVerified: 'User not verified.',
+	tokenMissing: 'Invalid or expired token',
 };
