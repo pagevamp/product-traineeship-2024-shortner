@@ -23,7 +23,7 @@ export class UsersService {
 				this.logger.log(` New user ${createUserDto.name}  created`);
 				return {
 					status: HttpStatus.CREATED,
-					message: successMessage.user_created,
+					message: successMessage.userCreated,
 				};
 			}
 		} catch (error) {
