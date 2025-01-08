@@ -20,9 +20,9 @@ export class AuthService {
 		if (!isPasswordValid) {
 			throw new UnauthorizedException(errorMessage.invalidCredentials);
 		}
-		// if (!verified_at) {
-		// 	throw new UnauthorizedException(errorMessage.notVerified);
-		// }
+		if (!verified_at) {
+			throw new UnauthorizedException(errorMessage.notVerified);
+		}
 		const payload = {
 			id,
 			email,
