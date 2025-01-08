@@ -8,7 +8,7 @@ export class CreateUserDto {
 
 	@IsString()
 	@IsNotEmpty()
-	@MinLength(5, { message: errorMessage.length_validation })
+	@MinLength(5, { message: errorMessage.lengthValidation })
 	password: string;
 
 	@IsString()
