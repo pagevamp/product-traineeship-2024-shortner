@@ -16,9 +16,9 @@ export class Verification {
 	@Column()
 	otp_code: string;
 
-	@Column()
+	@Column({ type: 'timestamptz' })
 	expires_at: Date;
 
-	@CreateDateColumn()
+	@CreateDateColumn({ type: 'timestamptz' })
 	created_at: Date;
 }
