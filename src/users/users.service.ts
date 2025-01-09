@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,7 +19,7 @@ export class UsersService {
 		const user = { ...createUserDto, password_hash: passwordHash };
 		const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
 		if (!createdUser) {
-			throw new NotFoundException(errorMessage.userCreationFailure);
+			throw new Error(errorMessage.userCreationFailure);
 		}
 		this.logger.log(` New user ${createUserDto.name}  created`);
 		return {
