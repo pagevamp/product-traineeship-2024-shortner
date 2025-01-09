@@ -8,7 +8,7 @@ import { RateLimitMiddlewareFactory } from './middleware/reateLimit.middleware';
 import { urlRateLimiter } from './config/rateLimit.config';
 import { UsersModule } from './users/users.module';
 import { APP_FILTER } from '@nestjs/core';
-import { HttpExceptionHandler } from './common/HttpExceptionHandler';
+import { HttpExceptionHandler } from '@/common/HttpExceptionHandler';
 
 @Module({
 	imports: [ConfigModule.forRoot({ isGlobal: true, validate }), DatabaseModule, UsersModule],
