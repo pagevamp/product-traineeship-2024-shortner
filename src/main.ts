@@ -9,14 +9,12 @@ import { redisClient } from '@/config/redis.config';
 
 async function bootstrap(): Promise<void> {
 	const logger = new Logger();
-	const app = await NestFactory.create(AppModule);
-	app.useGlobalPipes(new ValidationPipe());
 	const port = env.APP_PORT;
 	try {
 		const app = await NestFactory.create(AppModule, {
 			logger: WinstonModule.createLogger(loggerConfig),
 		});
-
+		app.useGlobalPipes(new ValidationPipe());
 		await redisClient.connect();
 		logger.log('Connected to Redis');
 
