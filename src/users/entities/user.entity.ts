@@ -14,13 +14,13 @@ export class User {
 	@Column()
 	name: string;
 
-	@Column({ type: 'timestamp without time zone', default: null })
+	@Column({ type: 'timestamptz', default: null })
 	verified_at: Date;
 
-	@CreateDateColumn({ type: 'timestamp without time zone' })
+	@CreateDateColumn({ type: 'timestamptz' })
 	created_at: Date;
 
-	@UpdateDateColumn({ type: 'timestamp without time zone' })
+	@UpdateDateColumn({ type: 'timestamptz' })
 	updated_at: Date;
 
 	@DeleteDateColumn({ nullable: true })
