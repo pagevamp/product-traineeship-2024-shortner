@@ -10,6 +10,12 @@ export const dataBaseConfigurations: DataSourceOptions = {
 	username: env.POSTGRES_USER,
 	password: env.POSTGRES_PASSWORD,
 	database: env.POSTGRES_DB,
+			ssl: true,
+	extra: {
+		ssl: {
+			rejectUnauthorized: false,
+		},
+	},
 	synchronize: false,
 	logging: true,
 	entities: [join(__dirname, '/../**/entities', '*.entity.{ts,js}')],
