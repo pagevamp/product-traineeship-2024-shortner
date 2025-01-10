@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from '@/auth/dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -12,6 +12,7 @@ export class AuthService {
 		private userService: UsersService,
 		private jwtService: JwtService,
 	) {}
+	private readonly logger = new Logger();
 	async login(loginDto: LoginDto): Promise<TokenResponse> {
 		const { email, password } = loginDto;
 		const user = await this.userService.findByEmail(email);
@@ -29,6 +30,7 @@ export class AuthService {
 			name,
 			verifiedAt: verified_at,
 		};
+		this.logger.log(`${email} logged in.`);
 		return {
 			accessToken: this.jwtService.sign(payload),
 		};
