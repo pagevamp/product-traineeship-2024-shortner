@@ -6,7 +6,7 @@ import { SuccessResponse } from '@/common/response.interface';
 @Controller('users')
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
-	@Post()
+	@Post('signup')
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Body() createUserDto: CreateUserDto): Promise<SuccessResponse> {
 		return await this.usersService.create(createUserDto);
