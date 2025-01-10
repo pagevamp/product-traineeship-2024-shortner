@@ -6,9 +6,11 @@ export const successMessage = {
 };
 
 export const errorMessage = {
-	lengthValidation: 'Must be atleast 5 characters long.',
 	invalidOrExpiredOtp: 'Invalid or expired OTP',
 	userAlreadyVerified: 'User is already verified',
 	userVerificationFailed: 'Failed to verify user',
 	userNotFound: 'User not found',
+	userCreationFailure: 'User not created',
+	minLengthValidation: 'Must be at least 5 characters long',
+	maxLengthValidation: 'Must less than 15 characters',
 };
