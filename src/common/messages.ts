@@ -5,6 +5,6 @@ export const successMessage = {
 
 export const errorMessage = {
 	userCreationFailure: 'User not created',
-	minLengthValidation: 'Must be atleast 5 characters long.',
-	maxLengthValidation: 'Must be atmost 15 characters long.',
+	minLengthValidation: 'Must be at least 5 characters long',
+	maxLengthValidation: 'Must less than 15 characters',
 };
