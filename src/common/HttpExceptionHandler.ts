@@ -17,7 +17,7 @@ export class HttpExceptionHandler implements ExceptionFilter {
 			error: name,
 			statusCode,
 			message,
-			...(!this.isProduction ? {} : { stack }),
+			...(this.isProduction ? {} : { stack }),
 			timestamp: new Date().toISOString(),
 			path: request.url,
 		});
