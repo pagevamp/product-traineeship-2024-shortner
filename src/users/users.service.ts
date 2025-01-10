@@ -3,14 +3,14 @@ import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, TypeORMError } from 'typeorm';
 import { hash } from 'bcrypt';
 import { SuccessResponse } from '@/common/response.interface';
 import { errorMessage, successMessage } from '@/common/messages';
 @Injectable()
 export class UsersService {
-	private readonly logger = new Logger();
 	constructor(
+		private readonly logger: Logger,
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
 	) {}
@@ -19,7 +19,7 @@ export class UsersService {
 		const user = { ...createUserDto, password_hash: passwordHash };
 		const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
 		if (!createdUser) {
-			throw new Error(errorMessage.userCreationFailure);
+			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
 		this.logger.log(` New user ${createUserDto.name}  created`);
 		return {

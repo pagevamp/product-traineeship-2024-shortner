@@ -1,3 +1,4 @@
+import { errorMessage } from '@/common/messages';
 import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateUserDto {
@@ -7,8 +8,8 @@ export class CreateUserDto {
 
 	@IsString()
 	@IsNotEmpty()
-	@MinLength(8)
-	@MaxLength(32)
+	@MinLength(5, { message: errorMessage.minLengthValidation })
+	@MaxLength(15, { message: errorMessage.maxLengthValidation })
 	password: string;
 
 	@IsString()
