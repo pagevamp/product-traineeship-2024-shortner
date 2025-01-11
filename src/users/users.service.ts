@@ -33,8 +33,8 @@ export class UsersService {
 		};
 	}
 
-	async sendEmailVerification(email: string): Promise<boolean> {
-		const user = await this.userRepository.findOne({ where: { email: email } });
+	async sendEmailVerification(email: string): Promise<SuccessResponse> {
+		const user = await this.userRepository.findOne({ where: { email } });
 		if (!user) {
 			throw new NotFoundException(errorMessage.userNotFound);
 		}
@@ -44,10 +44,13 @@ export class UsersService {
 		const otp = await this.otpVerificationService.createOtp(user.id);
 		this.emailService.sendEmail({
 			subject: signupOtpMailTemplate.subject,
-			to: [{ name: user.name ?? '', address: user.email }],
+			to: [{ name: user.name, address: user.email }],
 			html: signupOtpMailTemplate.body(otp, user.name),
 		});
-		return true;
+		return {
+			status: HttpStatus.OK,
+			message: successMessage.verificationEmailSent,
+		};
 	}
 
 	async verifyEmail(email: string, otp: string): Promise<SuccessResponse> {
@@ -58,7 +61,7 @@ export class UsersService {
 		if (user.verified_at) {
 			throw new UnprocessableEntityException(errorMessage.userAlreadyVerified);
 		}
-		const isVerifiedSuccessfully = await this.otpVerificationService.validateOtp(user.id, otp);
+		const isVerifiedSuccessfully = await this.otpVerificationService.validateThenRemoveOtp(user.id, otp);
 		if (!isVerifiedSuccessfully) {
 			throw new UnprocessableEntityException(errorMessage.userVerificationFailed);
 		}
