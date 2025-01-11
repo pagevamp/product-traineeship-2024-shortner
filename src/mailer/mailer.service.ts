@@ -30,7 +30,7 @@ export class MailerService {
 				text,
 			};
 			await this.transporter.sendMail(mailOptions);
-			this.logger.log('Mail sent successfully');
+			this.logger.log(`Mail sent to ${to[0].address} successfully`);
 		} catch (error) {
 			this.logger.error(`Failed to send email: ${error}`);
 		}
