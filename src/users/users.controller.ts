@@ -15,7 +15,7 @@ export class UsersController {
 
 	@Post('send-verification')
 	@HttpCode(HttpStatus.OK)
-	async emailVerification(@Body() verifyUserDto: VerifyUserDto): Promise<SuccessResponse> {
+	async emailVerification(@Body() verifyUserDto: Omit<VerifyUserDto, 'otp'>): Promise<SuccessResponse> {
 		return await this.usersService.sendEmailVerification(verifyUserDto.email);
 	}
 
