@@ -3,13 +3,15 @@ import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/users/entities/user.entity';
-import { Repository, TypeORMError } from 'typeorm';
+import { Equal, Repository, TypeORMError } from 'typeorm';
 import { hash } from 'bcrypt';
 import { SuccessResponse } from '@/common/response.interface';
 import { errorMessage, successMessage } from '@/common/messages';
 import { VerificationService } from '@/verification/verification.service';
 import { MailerService } from '@/mailer/mailer.service';
 import { signupOtpMailTemplate } from '@/template/email.template';
+import { VerifyUserDto } from '@/users/dto/verify-user.dto';
+import { SendVerificationDto } from '@/users/dto/send-verification.dto';
 @Injectable()
 export class UsersService {
 	constructor(
@@ -33,8 +35,8 @@ export class UsersService {
 		};
 	}
 
-	async sendEmailVerification(email: string): Promise<SuccessResponse> {
-		const user = await this.userRepository.findOne({ where: { email } });
+	async sendEmailVerification({ email }: SendVerificationDto): Promise<SuccessResponse> {
+		const user = await this.userRepository.findOne({ where: { email: Equal(email) } });
 		if (!user) {
 			throw new NotFoundException(errorMessage.userNotFound);
 		}
@@ -53,7 +55,7 @@ export class UsersService {
 		};
 	}
 
-	async verifyEmail(email: string, otp: string): Promise<SuccessResponse> {
+	async verifyEmail({ email, otp }: VerifyUserDto): Promise<SuccessResponse> {
 		const user = await this.userRepository.findOne({ where: { email } });
 		if (!user) {
 			throw new NotFoundException(errorMessage.userNotFound);
