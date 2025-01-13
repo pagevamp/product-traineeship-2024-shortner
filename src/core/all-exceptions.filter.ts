@@ -21,6 +21,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
 					: 'Something went wrong';
 
 		const stack = exception instanceof Error ? exception.stack : undefined;
+
+		if (statusCode === HttpStatus.TOO_MANY_REQUESTS) {
+			response.setHeader('Retry-After', '120');
+		}
 		response.status(statusCode).json({
 			statusCode,
 			message,
