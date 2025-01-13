@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Logger, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,10 +12,11 @@ import { MailerService } from '@/mailer/mailer.service';
 import { signupOtpMailTemplate } from '@/template/email.template';
 import { VerifyUserDto } from '@/users/dto/verify-user.dto';
 import { SendVerificationDto } from '@/users/dto/send-verification.dto';
+import { LoggerService } from '@/logger/logger.service';
 @Injectable()
 export class UsersService {
 	constructor(
-		private readonly logger: Logger,
+		private readonly logger: LoggerService,
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
 		private otpVerificationService: VerificationService,

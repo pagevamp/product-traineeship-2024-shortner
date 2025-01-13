@@ -1,10 +1,10 @@
 import { createTransport, SendMailOptions, Transporter } from 'nodemailer';
-import { Logger } from '@nestjs/common';
 import { MailerDto } from '@/mailer/dto/mailer.dto';
 import { env } from '@/config/env.config';
+import { LoggerService } from '@/logger/logger.service';
 
 export class MailerService {
-	private readonly logger = new Logger();
+	constructor(private logger: LoggerService) {}
 	transporter: Transporter = createTransport({
 		host: env.EMAIL_HOST,
 		port: env.EMAIL_PORT,
