@@ -25,6 +25,7 @@ export class RateLimitMiddlewareFactory {
 				},
 				standardHeaders: true,
 				legacyHeaders: false,
+				validate: { xForwardedForHeader: false },
 				store: new RedisStore({
 					sendCommand: (...args: string[]) => redisClient.sendCommand(args),
 				}),
