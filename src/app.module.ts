@@ -6,10 +6,18 @@ import { validate } from '@/config/env.config';
 import { DatabaseModule } from '@/database/db.module';
 import { RateLimitMiddlewareFactory } from '@/middleware/reateLimit.middleware';
 import { urlRateLimiter } from '@/config/rateLimit.config';
+import { VerificationModule } from '@/verification/verification.module';
 import { UsersModule } from '@/users/users.module';
+import { MailerModule } from '@/mailer/mailer.module';
 
 @Module({
-	imports: [ConfigModule.forRoot({ isGlobal: true, validate }), DatabaseModule, UsersModule],
+	imports: [
+		ConfigModule.forRoot({ isGlobal: true, validate }),
+		DatabaseModule,
+		UsersModule,
+		VerificationModule,
+		MailerModule,
+	],
 	controllers: [AppController],
 	providers: [AppService],
 })
