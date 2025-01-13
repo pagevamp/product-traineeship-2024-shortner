@@ -8,7 +8,7 @@ import { DatabaseModule } from '@/database/db.module';
 import { RateLimitMiddlewareFactory } from '@/middleware/reateLimit.middleware';
 import { urlRateLimiter } from '@/config/rateLimit.config';
 import { UsersModule } from '@/users/users.module';
-import { HttpExceptionHandler } from '@/common/HttpExceptionHandler';
+import { AllExceptionsFilter } from '@/core/all-exceptions.filter';
 
 @Module({
 	imports: [ConfigModule.forRoot({ isGlobal: true, validate }), DatabaseModule, UsersModule],
@@ -17,7 +17,7 @@ import { HttpExceptionHandler } from '@/common/HttpExceptionHandler';
 		AppService,
 		{
 			provide: APP_FILTER,
-			useClass: HttpExceptionHandler,
+			useClass: AllExceptionsFilter,
 		},
 	],
 })
