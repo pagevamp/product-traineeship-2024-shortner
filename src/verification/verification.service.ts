@@ -28,10 +28,7 @@ export class VerificationService {
 			},
 		});
 		if (recentOtpRequest) {
-			throw new HttpException(
-				`Please wait ${this.minutesToMakeNewOtpRequest / 60000} minutes to make new request.`,
-				HttpStatus.TOO_MANY_REQUESTS,
-			);
+			throw new HttpException(`Please wait two minutes to make new request.`, HttpStatus.TOO_MANY_REQUESTS);
 		}
 		const otp = generateOtp();
 		const hashedOtp = await hash(otp, env.SALT_ROUND);
