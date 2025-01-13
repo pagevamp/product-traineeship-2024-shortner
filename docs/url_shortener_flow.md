@@ -1,11 +1,11 @@
 # DESIGN FLOW FOR URL SHORTENER
 
 This documentation is based on the main business logic of URL shortener . Basically a long URL or original URL is sent
-by user including the hours after which the URL expires which is then converted in to a short URL using “URL shortening
-algorithm” and whenever user clicks the short URL link generated it is then redirected to long/original URL. If the
+by user including the hours after which the URL expires which is then converted into a short URL using **“URL shortening
+algorithm”** and whenever user clicks the short URL link generated it is then redirected to long/original URL. If the
 short URL expires then the URL won’t work but it is not deleted from the database so that we can keep on generating
-unique URL. We have used the package nano-id for URL shortening where we have decided to keep the size 6. All the routes
-used in URL is protected and only authorized (logged in and verified) users can access those routes.
+unique URL. We have used the package **nano-id** for URL shortening where we have decided to keep the size 6. All the
+routes used in URL is protected and only authorized (logged in and verified) users can access those routes.
 
 <a href="https://classic.yarnpkg.com/en/package/nanoid">NANO-ID</a>
 
