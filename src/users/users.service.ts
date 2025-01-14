@@ -29,7 +29,7 @@ export class UsersService {
 		if (!createdUser) {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
-		this.logger.log(` New user ${createUserDto.name}  created`);
+		this.logger.log(` New user ${createUserDto.name} created`);
 		return {
 			status: HttpStatus.CREATED,
 			message: successMessage.userCreated,
@@ -45,7 +45,7 @@ export class UsersService {
 			throw new UnprocessableEntityException(errorMessage.userAlreadyVerified);
 		}
 		const otp = await this.otpVerificationService.createOtp(user.id);
-		this.emailService.sendEmail({
+		await this.emailService.sendEmail({
 			subject: signupOtpMailTemplate.subject,
 			to: [{ name: user.name, address: user.email }],
 			html: signupOtpMailTemplate.body(otp, user.name),
