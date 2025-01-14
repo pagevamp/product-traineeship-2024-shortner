@@ -1,9 +1,15 @@
 export const successMessage = {
 	userCreated: 'User has been created successfully',
 	userFetched: 'User has been fetched successfully',
+	userVerified: 'User has been verified successfully',
+	verificationEmailSent: 'Verification Email has been sent successfully',
 };
 
 export const errorMessage = {
+	invalidOrExpiredOtp: 'Invalid or expired OTP',
+	userAlreadyVerified: 'User is already verified',
+	userVerificationFailed: 'Failed to verify user',
+	userNotFound: 'User not found',
 	userCreationFailure: 'User not created',
 	userNotFound: 'User not found',
 	invalidCredentials: 'Invalid Credentials. Please check your credentials',
