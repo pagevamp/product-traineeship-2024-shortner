@@ -9,7 +9,7 @@ export class MailerService {
 	transporter: Transporter = createTransport({
 		host: env.EMAIL_HOST,
 		port: env.EMAIL_PORT,
-		secure: true,
+		secure: false,
 		auth: {
 			user: env.EMAIL_USER,
 			pass: env.EMAIL_PASS,
