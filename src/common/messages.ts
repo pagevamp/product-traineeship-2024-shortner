@@ -11,7 +11,6 @@ export const errorMessage = {
 	userVerificationFailed: 'Failed to verify user',
 	userNotFound: 'User not found',
 	userCreationFailure: 'User not created',
-	userNotFound: 'User not found',
 	invalidCredentials: 'Invalid Credentials. Please check your credentials',
 	notVerified: 'User not verified. Please verify your account first',
 	tokenMissing: 'Authentication token missing. Please make sure you are logged in',

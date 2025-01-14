@@ -9,8 +9,8 @@ import { errorMessage } from '@/common/messages';
 @Injectable()
 export class AuthService {
 	constructor(
-		private userService: UsersService,
-		private jwtService: JwtService,
+		private readonly userService: UsersService,
+		private readonly jwtService: JwtService,
 	) {}
 	private readonly logger = new Logger();
 	async login(loginDto: LoginDto): Promise<TokenResponse> {
