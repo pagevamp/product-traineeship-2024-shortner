@@ -19,4 +19,5 @@ export const errorMessage = {
 	minLengthValidation: 'Must be at least 5 characters long',
 	maxLengthValidation: 'Must less than 15 characters',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
+	currentDateValidation: 'Expiary Date must be greater than the current date and time',
 };
