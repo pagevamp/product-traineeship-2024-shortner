@@ -28,6 +28,8 @@
 		]
 	},
 	"dependencies": {
+		"@logtail/node": "^0.5.2",
+		"@logtail/winston": "^0.5.2",
 		"@nestjs/common": "^10.0.0",
 		"@nestjs/config": "^3.3.0",
 		"@nestjs/core": "^10.0.0",
