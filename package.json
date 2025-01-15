@@ -42,6 +42,7 @@
 		"class-validator": "^0.14.1",
 		"dotenv": "^16.4.7",
 		"express-rate-limit": "^7.5.0",
+		"nanoid": "v3",
 		"nest-winston": "^1.9.7",
 		"nodemailer": "^6.9.16",
 		"pg": "^8.13.1",

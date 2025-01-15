@@ -4,6 +4,7 @@ export const successMessage = {
 	userVerified: 'User has been verified successfully',
 	verificationEmailSent: 'Verification Email has been sent successfully',
 	loginSuccess: 'Login success',
+	shortUrlCreated: 'Short URL created successfylly',
 };
 
 export const errorMessage = {
@@ -20,4 +21,5 @@ export const errorMessage = {
 	maxLengthValidation: 'Must less than 15 characters',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
 	currentDateValidation: 'Expiary Date must be greater than the current date and time',
+	urlCreationFailure: 'Short URL not created',
 };
