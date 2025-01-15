@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity('shortened_urls')
-export class Url {
+export class ShortUrl {
 	@PrimaryGeneratedColumn('uuid')
 	id: string;
 
