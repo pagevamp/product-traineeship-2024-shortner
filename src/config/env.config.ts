@@ -21,6 +21,7 @@ export const env = {
 	JWT_SECRET: process.env.JWT_SECRET,
 	JWT_EXPIRATION: process.env.JWT_EXPIRATION,
 	SALT_ROUND: +(process.env.SALT_ROUND || 10),
+	LOGTAIL_TOKEN: process.env.LOGTAIL_TOKEN,
 } as const;
 
 export enum APP_ENVIRONVENT {
@@ -54,6 +55,7 @@ const envSchema = z
 		JWT_SECRET: z.string().min(5, { message: 'JWT secret key cannot be smaller than 5' }),
 		JWT_EXPIRATION: z.string().min(1, { message: 'JWT_EXPIRATION time cannot be empty' }),
 		SALT_ROUND: z.coerce.number().default(10),
+		LOGTAIL_TOKEN: z.string().min(5),
 	})
 	.required();
 
