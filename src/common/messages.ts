@@ -17,7 +17,7 @@ export const errorMessage = {
 	tokenMissing: 'Authentication token missing. Please make sure you are logged in',
 	minLengthValidation: 'Must be at least 5 characters long',
 	maxLengthValidation: 'Must less than 15 characters',
-	currentDateValidation: 'Expiary Date must be greater than the current date and time',
+	currentDateValidation: 'Expiry Date must be greater than the current date and time',
 	urlCreationFailure: 'Short URL not created',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
 	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
