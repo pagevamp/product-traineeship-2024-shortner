@@ -9,5 +9,5 @@ export class CreateShortUrlDto {
 	@IsDate()
 	@ValidateIf((o) => o.expires_at !== null)
 	@MinDate(new Date(), { message: errorMessage.currentDateValidation })
-	expiaryDate: Date;
+	expiryDate: Date;
 }

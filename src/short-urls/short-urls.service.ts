@@ -18,12 +18,13 @@ export class ShortUrlsService {
 		private shortUrlRepository: Repository<ShortUrl>,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
-	async createShortUrl(user: User, { originalUrl, expiaryDate }: CreateShortUrlDto): Promise<SuccessResponse> {
+
+	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<SuccessResponse> {
 		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
 			user_id: user.id,
 			original_url: originalUrl,
-			expiary_date: expiaryDate,
+			expires_at: expiryDate,
 			short_code: urlCode,
 		};
 		const result = await this.shortUrlRepository.insert(shortUrl);
