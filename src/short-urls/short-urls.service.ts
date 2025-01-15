@@ -7,9 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, TypeORMError } from 'typeorm';
 import { generateUrlCode } from '@/short-urls/util/generate-url-code';
 import { User } from '@/users/entities/user.entity';
+import { LoggerService } from '@/logger/logger.service';
 @Injectable()
 export class ShortUrlsService {
 	constructor(
+		private readonly logger: LoggerService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 	) {}
@@ -17,6 +19,7 @@ export class ShortUrlsService {
 		let urlCode = generateUrlCode();
 		const existingUrlCode = await this.findByCode(urlCode);
 		if (existingUrlCode?.short_code === urlCode) {
+			this.logger.warn(`${urlCode} already exists. Generating new code`);
 			urlCode = generateUrlCode();
 		}
 		const shortUrl = {
@@ -29,6 +32,7 @@ export class ShortUrlsService {
 		if (!result) {
 			throw new TypeORMError(errorMessage.urlCreationFailure);
 		}
+		this.logger.log(`${user.name} created a new short URL`);
 		return {
 			status: HttpStatus.CREATED,
 			message: successMessage.shortUrlCreated,
