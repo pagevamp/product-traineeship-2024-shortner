@@ -10,15 +10,16 @@ import { urlRateLimiter } from '@/config/rateLimit.config';
 import { VerificationModule } from '@/verification/verification.module';
 import { UsersModule } from '@/users/users.module';
 import { MailerModule } from '@/mailer/mailer.module';
-
+import { LoggerModule } from '@/logger/logger.module';
 @Module({
-  imports: [
+	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
 		DatabaseModule,
 		UsersModule,
 		VerificationModule,
-    AuthModule,
+		AuthModule,
 		MailerModule,
+		LoggerModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

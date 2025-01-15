@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Logger, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,10 +12,11 @@ import { MailerService } from '@/mailer/mailer.service';
 import { signupOtpMailTemplate } from '@/template/email.template';
 import { VerifyUserDto } from '@/users/dto/verify-user.dto';
 import { SendVerificationDto } from '@/users/dto/send-verification.dto';
+import { LoggerService } from '@/logger/logger.service';
 @Injectable()
 export class UsersService {
 	constructor(
-		private readonly logger: Logger,
+		private readonly logger: LoggerService,
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
 		private otpVerificationService: VerificationService,
@@ -28,7 +29,7 @@ export class UsersService {
 		if (!createdUser) {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
-		this.logger.log(` New user ${createUserDto.name}  created`);
+		this.logger.log(` New user ${createUserDto.name} created`);
 		return {
 			status: HttpStatus.CREATED,
 			message: successMessage.userCreated,
@@ -51,7 +52,7 @@ export class UsersService {
 			throw new UnprocessableEntityException(errorMessage.userAlreadyVerified);
 		}
 		const otp = await this.otpVerificationService.createOtp(user.id);
-		this.emailService.sendEmail({
+		await this.emailService.sendEmail({
 			subject: signupOtpMailTemplate.subject,
 			to: [{ name: user.name, address: user.email }],
 			html: signupOtpMailTemplate.body(otp, user.name),
