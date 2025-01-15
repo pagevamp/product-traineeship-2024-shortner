@@ -16,12 +16,7 @@ export class ShortUrlsService {
 		private shortUrlRepository: Repository<ShortUrl>,
 	) {}
 	async createShortUrl(user: User, { originalUrl, expiaryDate }: CreateShortUrlDto): Promise<SuccessResponse> {
-		let urlCode = generateUrlCode();
-		const existingUrlCode = await this.findByCode(urlCode);
-		if (existingUrlCode?.short_code === urlCode) {
-			this.logger.warn(`${urlCode} already exists. Generating new code`);
-			urlCode = generateUrlCode();
-		}
+		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
 			user_id: user.id,
 			original_url: originalUrl,
@@ -42,5 +37,18 @@ export class ShortUrlsService {
 	async findByCode(urlCode: string): Promise<ShortUrl | null> {
 		const existingUrl = await this.shortUrlRepository.findOneBy({ short_code: urlCode });
 		return existingUrl;
+	}
+
+	private async generateUniqueCode(retryCount = 0): Promise<string> {
+		if (retryCount >= 10) {
+			throw new Error(errorMessage.shortCodeGenerationFailed);
+		}
+		const code = generateUrlCode();
+		const existingUrl = await this.findByCode(code);
+		if (existingUrl) {
+			this.logger.warn(`${code} already exists. Attempt ${retryCount + 1}/10`);
+			return this.generateUniqueCode(retryCount + 1);
+		}
+		return code;
 	}
 }

@@ -20,4 +20,5 @@ export const errorMessage = {
 	currentDateValidation: 'Expiary Date must be greater than the current date and time',
 	urlCreationFailure: 'Short URL not created',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
+	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
 };
