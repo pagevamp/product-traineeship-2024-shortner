@@ -25,7 +25,7 @@ export class ShortUrl {
 	@Column()
 	original_url: string;
 
-	@Column({ unique: true })
+	@Column({ type: 'varchar', length: 8, unique: true })
 	short_code: string;
 
 	@Column({ type: 'timestamptz', default: () => "NOW() + INTERVAL '1 day'" })

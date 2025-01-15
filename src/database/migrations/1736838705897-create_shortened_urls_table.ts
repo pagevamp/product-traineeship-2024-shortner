@@ -7,7 +7,7 @@ export class CreateShortenedUrlsTable1736838705897 implements MigrationInterface
             id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
             user_id uuid NOT NULL,
             original_url character varying NOT NULL,
-            short_code character varying NOT NULL,
+            short_code character varying(8) NOT NULL,
             expires_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() + INTERVAL '1 day',
             created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
             updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
