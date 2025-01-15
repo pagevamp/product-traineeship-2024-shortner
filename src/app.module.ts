@@ -9,6 +9,7 @@ import { urlRateLimiter } from '@/config/rateLimit.config';
 import { VerificationModule } from '@/verification/verification.module';
 import { UsersModule } from '@/users/users.module';
 import { MailerModule } from '@/mailer/mailer.module';
+import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 
 @Module({
 	imports: [
@@ -17,6 +18,7 @@ import { MailerModule } from '@/mailer/mailer.module';
 		UsersModule,
 		VerificationModule,
 		MailerModule,
+		ShortUrlsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
