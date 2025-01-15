@@ -1,14 +1,18 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { ShortUrlsService } from '@/short-urls/short-urls.service';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
 import { SuccessResponse } from '@/common/response.interface';
-
+import { AuthGuard } from '@/auth/guard/auth.guard';
+import { User } from '@/users/entities/user.entity';
+import { Request } from 'express';
+@UseGuards(AuthGuard)
 @Controller('urls')
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
-	@Post('create')
+	@Post()
 	@HttpCode(HttpStatus.CREATED)
-	async create(@Body() createShortUrlDto: CreateShortUrlDto): Promise<SuccessResponse> {
-		return await this.shortUrlsService.createShortUrl(createShortUrlDto);
+	async create(@Req() req: Request, @Body() createShortUrlDto: CreateShortUrlDto): Promise<SuccessResponse> {
+		const user = req.user as User;
+		return await this.shortUrlsService.createShortUrl(user, createShortUrlDto);
 	}
 }
