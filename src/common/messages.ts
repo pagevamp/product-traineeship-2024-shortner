@@ -3,6 +3,7 @@ export const successMessage = {
 	userFetched: 'User has been fetched successfully',
 	userVerified: 'User has been verified successfully',
 	verificationEmailSent: 'Verification Email has been sent successfully',
+	loginSuccess: 'Login success',
 };
 
 export const errorMessage = {
