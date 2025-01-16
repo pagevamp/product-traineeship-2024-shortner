@@ -1,11 +1,12 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, Logger, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { env } from '@/config/env.config';
+import { LoggerService } from '@/logger/logger.service';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+	constructor(private readonly logger: LoggerService) {}
 	private readonly isProduction = env.NODE_ENV === 'production';
-	private readonly logger = new Logger();
 
 	catch(exception: unknown, host: ArgumentsHost): void {
 		const ctx = host.switchToHttp();
