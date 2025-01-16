@@ -11,6 +11,7 @@ async function bootstrap(): Promise<void> {
 	const port = env.APP_PORT;
 	try {
 		const app = await NestFactory.create(AppModule);
+		app.enableCors();
 		app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 		app.useGlobalPipes(new ValidationPipe());
 		await redisClient.connect();
