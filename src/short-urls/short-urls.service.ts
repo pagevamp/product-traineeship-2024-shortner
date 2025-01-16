@@ -30,7 +30,7 @@ export class ShortUrlsService {
 		if (!result) {
 			throw new TypeORMError(errorMessage.urlCreationFailure);
 		}
-		this.logger.log(`${user.name} created a new short URL`);
+		this.logger.log(`${user.email} created a new short URL`);
 		return shortUrl;
 	}
 
