@@ -18,6 +18,7 @@ import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
 import { SuccessResponse } from '@/common/response.interface';
 import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
+import { successMessage } from '@/common/messages';
 @UseGuards(AuthGuard)
 @Controller('urls')
 export class ShortUrlsController {
@@ -26,7 +27,11 @@ export class ShortUrlsController {
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Req() req: Request, @Body() createShortUrlDto: CreateShortUrlDto): Promise<SuccessResponse> {
 		const user = req.user as User;
-		return await this.shortUrlsService.createShortUrl(user, createShortUrlDto);
+		await this.shortUrlsService.createShortUrl(user, createShortUrlDto);
+		return {
+			status: HttpStatus.CREATED,
+			message: successMessage.shortUrlCreated,
+		};
 	}
 
 	@Get(':shortCode')
