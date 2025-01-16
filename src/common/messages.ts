@@ -10,6 +10,7 @@ export const errorMessage = {
 	userAlreadyVerified: 'User is already verified',
 	userVerificationFailed: 'Failed to verify user',
 	userNotFound: 'User not found',
+	userAlreadyExists: 'User with that email already exists',
 	userCreationFailure: 'User not created',
 	invalidCredentials: 'Invalid Credentials. Please check your credentials',
 	notVerified: 'User not verified. Please verify your account first',

@@ -1,9 +1,15 @@
-import { HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import {
+	BadRequestException,
+	HttpStatus,
+	Injectable,
+	NotFoundException,
+	UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/users/entities/user.entity';
-import { Equal, Repository, TypeORMError } from 'typeorm';
+import { Repository, TypeORMError } from 'typeorm';
 import { hash } from 'bcrypt';
 import { SuccessResponse } from '@/common/response.interface';
 import { errorMessage, successMessage } from '@/common/messages';
@@ -23,13 +29,18 @@ export class UsersService {
 		private emailService: MailerService,
 	) {}
 	async create(createUserDto: CreateUserDto): Promise<SuccessResponse> {
+		const userExists = await this.userRepository.findOneBy({ email: createUserDto.email });
+		if (userExists) {
+			throw new BadRequestException(errorMessage.userAlreadyExists);
+		}
 		const passwordHash = await hash(createUserDto.password, env.SALT_ROUND);
 		const user = { ...createUserDto, password_hash: passwordHash };
 		const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
 		if (!createdUser) {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
-		this.logger.log(` New user ${createUserDto.name} created`);
+		this.logger.log(`New user ${createUserDto.name} created`);
+		await this.sendEmailVerification({ email: user.email });
 		return {
 			status: HttpStatus.CREATED,
 			message: successMessage.userCreated,
@@ -44,10 +55,7 @@ export class UsersService {
 		return user;
 	}
 	async sendEmailVerification({ email }: SendVerificationDto): Promise<SuccessResponse> {
-		const user = await this.userRepository.findOne({ where: { email: Equal(email) } });
-		if (!user) {
-			throw new NotFoundException(errorMessage.userNotFound);
-		}
+		const user = await this.findByEmail(email);
 		if (user.verified_at) {
 			throw new UnprocessableEntityException(errorMessage.userAlreadyVerified);
 		}
@@ -64,10 +72,7 @@ export class UsersService {
 	}
 
 	async verifyEmail({ email, otp }: VerifyUserDto): Promise<SuccessResponse> {
-		const user = await this.userRepository.findOne({ where: { email } });
-		if (!user) {
-			throw new NotFoundException(errorMessage.userNotFound);
-		}
+		const user = await this.findByEmail(email);
 		if (user.verified_at) {
 			throw new UnprocessableEntityException(errorMessage.userAlreadyVerified);
 		}
