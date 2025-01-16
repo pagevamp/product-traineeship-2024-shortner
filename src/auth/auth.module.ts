@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
 import { AuthController } from '@/auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { env } from '@/config/env.config';
 import { UsersModule } from '@/users/users.module';
+import { RateLimitMiddlewareFactory } from '@/middleware/reateLimit.middleware';
+import { authRateLimiter } from '@/config/rateLimit.config';
 
 @Module({
 	imports: [
@@ -17,4 +19,10 @@ import { UsersModule } from '@/users/users.module';
 	controllers: [AuthController],
 	providers: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule {
+	configure(consumer: MiddlewareConsumer): void {
+		consumer
+			.apply(RateLimitMiddlewareFactory.create(authRateLimiter))
+			.forRoutes({ path: '/auth/login/', method: RequestMethod.POST, version: '1' });
+	}
+}
