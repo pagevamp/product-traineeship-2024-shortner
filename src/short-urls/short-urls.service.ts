@@ -1,7 +1,6 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { SuccessResponse } from '@/common/response.interface';
-import { errorMessage, successMessage } from '@/common/messages';
+import { errorMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, TypeORMError } from 'typeorm';
@@ -15,7 +14,7 @@ export class ShortUrlsService {
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 	) {}
-	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<SuccessResponse> {
+	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
 		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
 			user_id: user.id,
@@ -28,10 +27,7 @@ export class ShortUrlsService {
 			throw new TypeORMError(errorMessage.urlCreationFailure);
 		}
 		this.logger.log(`${user.name} created a new short URL`);
-		return {
-			status: HttpStatus.CREATED,
-			message: successMessage.shortUrlCreated,
-		};
+		return shortUrl;
 	}
 
 	async findByCode(urlCode: string): Promise<ShortUrl | null> {
