@@ -14,7 +14,10 @@ export class ShortUrlsService {
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 	) {}
-	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
+	async createShortUrl(
+		user: User,
+		{ originalUrl, expiryDate }: CreateShortUrlDto,
+	): Promise<Pick<ShortUrl, 'user_id' | 'original_url' | 'expires_at' | 'short_code'>> {
 		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
 			user_id: user.id,
@@ -42,7 +45,7 @@ export class ShortUrlsService {
 		const code = generateUrlCode();
 		const existingUrl = await this.findByCode(code);
 		if (existingUrl) {
-			this.logger.warn(`${code} already exists. Attempt ${retryCount + 1}/10`);
+			this.logger.warn(`${code} already exists. Attempt ${retryCount + 1} out of 10`);
 			return this.generateUniqueCode(retryCount + 1);
 		}
 		return code;
