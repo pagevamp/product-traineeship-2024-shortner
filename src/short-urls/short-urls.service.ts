@@ -17,7 +17,6 @@ export class ShortUrlsService {
 		private shortUrlRepository: Repository<ShortUrl>,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
-
 	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
 		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
@@ -30,7 +29,7 @@ export class ShortUrlsService {
 		if (!result) {
 			throw new TypeORMError(errorMessage.urlCreationFailure);
 		}
-		this.logger.log(`${user.email} created a new short URL`);
+		this.logger.log(`${user.name} created a new short URL`);
 		return shortUrl;
 	}
 
