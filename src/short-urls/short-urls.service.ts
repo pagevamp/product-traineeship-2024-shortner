@@ -3,7 +3,7 @@ import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
 import { errorMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, TypeORMError } from 'typeorm';
+import { MoreThan, Repository, TypeORMError } from 'typeorm';
 import { generateUrlCode } from '@/short-urls/util/generate-url-code';
 import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
@@ -37,6 +37,13 @@ export class ShortUrlsService {
 	async findByCode(urlCode: string): Promise<ShortUrl | null> {
 		const existingUrl = await this.shortUrlRepository.findOneBy({ short_code: urlCode });
 		return existingUrl;
+	}
+
+	async findAllUrls(user: User, includeExpired?: string): Promise<ShortUrl[]> {
+		if (includeExpired === 'true') {
+			return await this.shortUrlRepository.find({ where: { user_id: user.id } });
+		}
+		return await this.shortUrlRepository.find({ where: { user_id: user.id, expires_at: MoreThan(new Date()) } });
 	}
 
 	private async generateUniqueCode(retryCount = 0): Promise<string> {
