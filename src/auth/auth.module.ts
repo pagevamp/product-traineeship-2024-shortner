@@ -4,7 +4,7 @@ import { AuthController } from '@/auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { env } from '@/config/env.config';
 import { UsersModule } from '@/users/users.module';
-import { RateLimitMiddlewareFactory } from '@/middleware/reateLimit.middleware';
+import { RateLimitMiddlewareFactory } from '@/middleware/rate-limit.middleware';
 import { authRateLimiter } from '@/config/rateLimit.config';
 
 @Module({

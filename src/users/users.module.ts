@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/users/entities/user.entity';
 import { VerificationModule } from '@/verification/verification.module';
 import { MailerModule } from '@/mailer/mailer.module';
-import { RateLimitMiddlewareFactory } from '@/middleware/reateLimit.middleware';
+import { RateLimitMiddlewareFactory } from '@/middleware/rate-limit.middleware';
 import { authRateLimiter, otpVerificationRateLimiter } from '@/config/rateLimit.config';
 
 @Module({
