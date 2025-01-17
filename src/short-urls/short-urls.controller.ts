@@ -19,6 +19,7 @@ import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
 import { Request, Response } from 'express';
 import { successMessage } from '@/common/messages';
+import { Avoid } from '@/decorator/avoid-guard.decorator';
 @UseGuards(AuthGuard)
 @Controller('urls')
 export class ShortUrlsController {
@@ -33,6 +34,8 @@ export class ShortUrlsController {
 			message: successMessage.shortUrlCreated,
 		};
 	}
+
+	@Avoid()
 	@Get(':shortCode')
 	@Version(VERSION_NEUTRAL)
 	async redirect(@Param('shortCode') shortCode: string, @Res() res: Response, @Req() req: Request): Promise<void> {
