@@ -16,8 +16,8 @@ export class ShortUrlsService {
 		private readonly logger: LoggerService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
-		private readonly template = new HTMLTemplateForRedirection(),
 	) {}
+	private readonly template = new HTMLTemplateForRedirection();
 	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
 		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
