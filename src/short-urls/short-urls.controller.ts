@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
@@ -20,11 +21,12 @@ import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
+import { UpdateResult } from 'typeorm';
 @UseGuards(AuthGuard)
-@Controller('urls')
+@Controller()
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
-	@Post()
+	@Post('urls')
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Req() req: Request, @Body() createShortUrlDto: CreateShortUrlDto): Promise<SuccessResponse> {
 		const user = req.user as User;
@@ -44,5 +46,10 @@ export class ShortUrlsController {
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
 		res.setHeader('Content-Type', 'text/html');
 		res.status(template.status).send(template.data);
+	}
+
+	@Delete('urls')
+	async delete(@Param('id') id: string): Promise<UpdateResult> {
+		return await this.shortUrlsService.deleteUrls(id);
 	}
 }

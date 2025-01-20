@@ -12,9 +12,12 @@ import { AllExceptionsFilter } from '@/core/all-exceptions.filter';
 import { MailerModule } from '@/mailer/mailer.module';
 import { LoggerModule } from '@/logger/logger.module';
 import { ShortUrlsModule } from '@/short-urls/short-urls.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronModule } from '@/cron/cron.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
+		ScheduleModule.forRoot(),
 		DatabaseModule,
 		UsersModule,
 		VerificationModule,
@@ -22,6 +25,7 @@ import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 		MailerModule,
 		LoggerModule,
 		ShortUrlsModule,
+		CronModule,
 	],
 	controllers: [AppController],
 	providers: [

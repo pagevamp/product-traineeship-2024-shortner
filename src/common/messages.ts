@@ -5,6 +5,7 @@ export const successMessage = {
 	verificationEmailSent: 'Verification Email has been sent successfully',
 	loginSuccess: 'Login success',
 	shortUrlCreated: 'Short URL created successfylly',
+	noExpiredUrls: 'No short urls are expired.',
 };
 
 export const errorMessage = {

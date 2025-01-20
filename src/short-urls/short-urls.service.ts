@@ -1,18 +1,21 @@
 import { HTMLTemplateForRedirection } from '@/template/redirect.template';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { errorMessage } from '@/common/messages';
+import { errorMessage, successMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, TypeORMError } from 'typeorm';
+import { LessThan, Repository, TypeORMError, UpdateResult } from 'typeorm';
 import { generateUrlCode } from '@/short-urls/util/generate-url-code';
 import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
+import { UsersService } from '@/users/users.service';
+
 @Injectable()
 export class ShortUrlsService {
 	constructor(
 		private readonly logger: LoggerService,
+		private readonly userService: UsersService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 	) {}
@@ -38,7 +41,10 @@ export class ShortUrlsService {
 		return existingUrl;
 	}
 	async redirectToOriginal(shortCode: string, shortURL: string): Promise<TemplateResponse> {
-		const urlData = await this.shortUrlRepository.findOneBy({ short_code: shortCode });
+		const urlData = await this.shortUrlRepository.findOne({
+			where: { short_code: shortCode },
+			relations: ['user'],
+		});
 		if (!urlData) {
 			return {
 				status: HttpStatus.NOT_FOUND,
@@ -70,5 +76,23 @@ export class ShortUrlsService {
 			return this.generateUniqueCode(retryCount + 1);
 		}
 		return code;
+	}
+	async checkURLExpiry(): Promise<void> {
+		const currentDate = new Date();
+		const expiredUrls = await this.shortUrlRepository.find({
+			where: { expires_at: LessThan(currentDate) },
+			relations: ['user'],
+		});
+		if (expiredUrls.length == 0) {
+			this.logger.log(successMessage.noExpiredUrls);
+		}
+		for (const url of expiredUrls) {
+			await this.deleteUrls(url.id);
+			this.logger.log(`${url.short_code} is expired and hence deleted`);
+		}
+	}
+
+	async deleteUrls(id: string): Promise<UpdateResult> {
+		return await this.shortUrlRepository.softDelete({ id });
 	}
 }
