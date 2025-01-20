@@ -9,5 +9,6 @@ import { UsersModule } from '@/users/users.module';
 	imports: [TypeOrmModule.forFeature([ShortUrl]), UsersModule],
 	controllers: [ShortUrlsController],
 	providers: [ShortUrlsService],
+	exports: [ShortUrlsService],
 })
 export class ShortUrlsModule {}
