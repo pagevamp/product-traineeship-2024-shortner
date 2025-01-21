@@ -9,7 +9,7 @@ export interface GetMethodResponse extends SuccessResponse {
 
 export type TokenResponse = {
 	accessToken: string;
-}; & SuccessResponse;
+} & SuccessResponse;
 
 export type TemplateResponse = {
 	status: number;

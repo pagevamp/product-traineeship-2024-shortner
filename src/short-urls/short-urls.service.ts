@@ -30,7 +30,7 @@ export class ShortUrlsService {
 		if (!result) {
 			throw new TypeORMError(errorMessage.urlCreationFailure);
 		}
-		this.logger.log(`${user.email} created a new short URL`);
+		this.logger.log(`${user.email} created a new short URL. Code ${shortUrl.short_code}`);
 		return shortUrl;
 	}
 
@@ -46,7 +46,7 @@ export class ShortUrlsService {
 		const code = generateUrlCode();
 		const existingUrl = await this.findByCode(code);
 		if (existingUrl) {
-			this.logger.warn(`${code} already exists. Attempt ${retryCount + 1}/10`);
+			this.logger.warn(`${code} already exists. Attempt ${retryCount + 1} out of 10`);
 			return this.generateUniqueCode(retryCount + 1);
 		}
 		return code;

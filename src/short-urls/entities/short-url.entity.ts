@@ -1,3 +1,4 @@
+import { env } from '@/config/env.config';
 import { User } from '@/users/entities/user.entity';
 import {
 	Column,
@@ -28,7 +29,7 @@ export class ShortUrl {
 	@Column({ type: 'varchar', length: 8, unique: true })
 	short_code: string;
 
-	@Column({ type: 'timestamptz', default: () => "NOW() + INTERVAL '1 day'" })
+	@Column({ type: 'timestamptz', default: () => `NOW() + INTERVAL '${env.DEFAULT_URL_EXPIRY_TIME}'` })
 	expires_at: Date;
 
 	@CreateDateColumn({ type: 'timestamptz' })
