@@ -6,6 +6,7 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	shortUrlCreated: 'Short URL created successfylly',
 	noExpiredUrls: 'No short urls are expired.',
+	deleteUrl: 'URL Deletion successfull url with id',
 };
 
 export const errorMessage = {
@@ -24,4 +25,8 @@ export const errorMessage = {
 	currentDateValidation: 'Expiary Date must be greater than the current date and time',
 	urlCreationFailure: 'Short URL not created',
 	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
+	emailSendFailed: 'Failed to send email ->',
+	jobFailed: 'Job failed with id ->',
+	jobRemoved: 'Removing job with id ->',
+	expiredEmailTempText: 'Your short code is expired , please generate a new one if you need',
 };
