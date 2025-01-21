@@ -6,7 +6,7 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	shortUrlCreated: 'Short URL created successfylly',
 	noExpiredUrls: 'No short urls are expired.',
-	deleteUrl: 'URL Deletion successfull url with id',
+	deleteUrl: 'URL Deletion successful  with id',
 };
 
 export const errorMessage = {
