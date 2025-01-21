@@ -12,3 +12,18 @@ export const signupOtpMailTemplate = {
     </div>
     `,
 };
+
+export const expiredShortCodeMailTemplate = {
+	subject: 'Your short URL has expired.',
+	/**
+	 * Generates a random OTP of the specified size.
+	 * @param shortCode - code to send to through email.
+	 * @param userName - name of the user to send the email to.
+	 */
+	body: (shortCode: string, userName: string): string => `
+    <div>
+    <p>Hey ${userName}</p>
+    <p>The short code <b>${shortCode}</b> has expired.</p>
+    </div>
+    `,
+};
