@@ -1,12 +1,11 @@
-import { HttpStatus, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/users/entities/user.entity';
-import { Equal, Repository, TypeORMError } from 'typeorm';
+import { Repository, TypeORMError } from 'typeorm';
 import { hash } from 'bcrypt';
-import { SuccessResponse } from '@/common/response.interface';
-import { errorMessage, successMessage } from '@/common/messages';
+import { errorMessage } from '@/common/messages';
 import { VerificationService } from '@/verification/verification.service';
 import { MailerService } from '@/mailer/mailer.service';
 import { signupOtpMailTemplate } from '@/template/email.template';
@@ -22,18 +21,20 @@ export class UsersService {
 		private otpVerificationService: VerificationService,
 		private emailService: MailerService,
 	) {}
-	async create(createUserDto: CreateUserDto): Promise<SuccessResponse> {
+	async create(createUserDto: CreateUserDto): Promise<User> {
+		const userExists = await this.userRepository.findOneBy({ email: createUserDto.email });
+		if (userExists) {
+			throw new BadRequestException(errorMessage.userAlreadyExists);
+		}
 		const passwordHash = await hash(createUserDto.password, env.SALT_ROUND);
 		const user = { ...createUserDto, password_hash: passwordHash };
 		const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
 		if (!createdUser) {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
-		this.logger.log(` New user ${createUserDto.name} created`);
-		return {
-			status: HttpStatus.CREATED,
-			message: successMessage.userCreated,
-		};
+		this.logger.log(`New user ${createUserDto.name} created`);
+		await this.sendEmailVerification({ email: user.email });
+		return createdUser as User;
 	}
 
 	async findByEmail(email: string): Promise<User> {
@@ -43,11 +44,9 @@ export class UsersService {
 		}
 		return user;
 	}
-	async sendEmailVerification({ email }: SendVerificationDto): Promise<SuccessResponse> {
-		const user = await this.userRepository.findOne({ where: { email: Equal(email) } });
-		if (!user) {
-			throw new NotFoundException(errorMessage.userNotFound);
-		}
+
+	async sendEmailVerification({ email }: SendVerificationDto): Promise<void> {
+		const user = await this.findByEmail(email);
 		if (user.verified_at) {
 			throw new UnprocessableEntityException(errorMessage.userAlreadyVerified);
 		}
@@ -57,17 +56,10 @@ export class UsersService {
 			to: [{ name: user.name, address: user.email }],
 			html: signupOtpMailTemplate.body(otp, user.name),
 		});
-		return {
-			status: HttpStatus.OK,
-			message: successMessage.verificationEmailSent,
-		};
 	}
 
-	async verifyEmail({ email, otp }: VerifyUserDto): Promise<SuccessResponse> {
-		const user = await this.userRepository.findOne({ where: { email } });
-		if (!user) {
-			throw new NotFoundException(errorMessage.userNotFound);
-		}
+	async verifyEmail({ email, otp }: VerifyUserDto): Promise<User> {
+		const user = await this.findByEmail(email);
 		if (user.verified_at) {
 			throw new UnprocessableEntityException(errorMessage.userAlreadyVerified);
 		}
@@ -78,9 +70,6 @@ export class UsersService {
 		user.verified_at = new Date();
 		await this.userRepository.save(user);
 		this.logger.log(`${email} verified successfully.`);
-		return {
-			status: HttpStatus.OK,
-			message: successMessage.userVerified,
-		};
+		return user;
 	}
 }
