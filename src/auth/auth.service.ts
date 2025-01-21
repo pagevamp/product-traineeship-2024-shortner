@@ -3,7 +3,6 @@ import { LoginDto } from '@/auth/dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '@/users/users.service';
-import { TokenResponse } from '@/common/response.interface';
 import { errorMessage } from '@/common/messages';
 import { LoggerService } from '@/logger/logger.service';
 
@@ -14,7 +13,7 @@ export class AuthService {
 		private readonly userService: UsersService,
 		private readonly jwtService: JwtService,
 	) {}
-	async login(loginDto: LoginDto): Promise<TokenResponse> {
+	async login(loginDto: LoginDto): Promise<string> {
 		const { email, password } = loginDto;
 		const user = await this.userService.findByEmail(email);
 		const { id, name, verified_at, password_hash } = user;
@@ -32,8 +31,6 @@ export class AuthService {
 			verifiedAt: verified_at,
 		};
 		this.logger.log(`${email} logged in.`);
-		return {
-			accessToken: this.jwtService.sign(payload),
-		};
+		return this.jwtService.sign(payload);
 	}
 }

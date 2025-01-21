@@ -4,6 +4,7 @@ export const successMessage = {
 	userVerified: 'User has been verified successfully',
 	verificationEmailSent: 'Verification Email has been sent successfully',
 	shortUrlCreated: 'Short URL created successfylly',
+	loginSuccess: 'Login success',
 };
 
 export const errorMessage = {
@@ -11,6 +12,7 @@ export const errorMessage = {
 	userAlreadyVerified: 'User is already verified',
 	userVerificationFailed: 'Failed to verify user',
 	userNotFound: 'User not found',
+	userAlreadyExists: 'User with that email already exists',
 	userCreationFailure: 'User not created',
 	invalidCredentials: 'Invalid Credentials. Please check your credentials',
 	notVerified: 'User not verified. Please verify your account first',
