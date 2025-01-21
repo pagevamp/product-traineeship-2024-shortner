@@ -4,11 +4,19 @@ import { ShortUrlsController } from '@/short-urls/short-urls.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { UsersModule } from '@/users/users.module';
+import { BullModule } from '@nestjs/bullmq';
+import { ExpiryEmailConsumer } from '@/queue/queue.consumer';
+import { MailerModule } from '@/mailer/mailer.module';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([ShortUrl]), UsersModule],
+	imports: [
+		TypeOrmModule.forFeature([ShortUrl]),
+		UsersModule,
+		BullModule.registerQueue({ name: 'notifyExpiredUrl' }),
+		MailerModule,
+	],
 	controllers: [ShortUrlsController],
-	providers: [ShortUrlsService],
+	providers: [ShortUrlsService, ExpiryEmailConsumer],
 	exports: [ShortUrlsService],
 })
 export class ShortUrlsModule {}

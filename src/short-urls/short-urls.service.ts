@@ -10,6 +10,8 @@ import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
 import { UsersService } from '@/users/users.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class ShortUrlsService {
@@ -18,6 +20,7 @@ export class ShortUrlsService {
 		private readonly userService: UsersService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
+		@InjectQueue('notifyExpiredUrl') private queueService: Queue,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
 	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
@@ -87,12 +90,22 @@ export class ShortUrlsService {
 			this.logger.log(successMessage.noExpiredUrls);
 		}
 		for (const url of expiredUrls) {
-			await this.deleteUrls(url.id);
-			this.logger.log(`${url.short_code} is expired and hence deleted`);
+			await this.queueService.add(
+				'notifyExpiredUrl',
+				{
+					id: url.id,
+					email: url.user.email,
+					shortCode: url.short_code,
+					name: url.user.name,
+				},
+				{ removeOnComplete: true, delay: 2000, attempts: 5, jobId: `notifyExpiredUrl-${url.id}` },
+			);
 		}
 	}
 
 	async deleteUrls(id: string): Promise<UpdateResult> {
-		return await this.shortUrlRepository.softDelete({ id });
+		const deletionResult = await this.shortUrlRepository.softDelete({ id });
+		this.logger.log(`${successMessage.deleteUrl} ${id}`);
+		return deletionResult;
 	}
 }

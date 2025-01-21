@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
-import { validate } from '@/config/env.config';
+import { env, validate } from '@/config/env.config';
 import { DatabaseModule } from '@/database/db.module';
 import { AuthModule } from '@/auth/auth.module';
 import { VerificationModule } from '@/verification/verification.module';
@@ -14,10 +14,17 @@ import { LoggerModule } from '@/logger/logger.module';
 import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from '@/cron/cron.module';
+import { BullModule } from '@nestjs/bullmq';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
 		ScheduleModule.forRoot(),
+		BullModule.forRoot({
+			connection: {
+				host: env.REDIS_HOST,
+				port: env.REDIS_PORT,
+			},
+		}),
 		DatabaseModule,
 		UsersModule,
 		VerificationModule,
