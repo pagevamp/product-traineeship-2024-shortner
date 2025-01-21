@@ -9,4 +9,4 @@ export interface GetMethodResponse extends SuccessResponse {
 
 export type TokenResponse = {
 	accessToken: string;
-};
+} & SuccessResponse;
