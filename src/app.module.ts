@@ -10,6 +10,7 @@ import { VerificationModule } from '@/verification/verification.module';
 import { UsersModule } from '@/users/users.module';
 import { AllExceptionsFilter } from '@/core/all-exceptions.filter';
 import { MailerModule } from '@/mailer/mailer.module';
+import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 import { LoggerModule } from '@/logger/logger.module';
 import { HealthModule } from '@/health/health.module';
 @Module({
@@ -20,6 +21,7 @@ import { HealthModule } from '@/health/health.module';
 		VerificationModule,
 		AuthModule,
 		MailerModule,
+		ShortUrlsModule,
 		LoggerModule,
 		HealthModule,
 	],
