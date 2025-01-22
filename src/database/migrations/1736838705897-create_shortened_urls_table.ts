@@ -1,3 +1,4 @@
+import { env } from '@/config/env.config';
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateShortenedUrlsTable1736838705897 implements MigrationInterface {
@@ -8,7 +9,7 @@ export class CreateShortenedUrlsTable1736838705897 implements MigrationInterface
             user_id uuid NOT NULL,
             original_url character varying NOT NULL,
             short_code character varying(8) NOT NULL,
-            expires_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() + INTERVAL '1 day',
+            expires_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() + INTERVAL '${env.DEFAULT_URL_EXPIRY_TIME}',
             created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
             updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
             deleted_at TIMESTAMP WITH TIME ZONE,

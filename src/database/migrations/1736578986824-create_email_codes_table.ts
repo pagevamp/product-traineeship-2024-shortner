@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreaeEmailCodesTable1736578986824 implements MigrationInterface {
+export class CreateEmailCodesTable1736578986824 implements MigrationInterface {
 	public async up(queryRunner: QueryRunner): Promise<void> {
 		await queryRunner.query(`
             CREATE TABLE email_codes (
