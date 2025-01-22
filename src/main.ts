@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '@/app.module';
 import { Logger, VersioningType } from '@nestjs/common';
 import { env } from '@/config/env.config';
-import { ValidationPipe, RequestMethod } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { redisClient } from '@/config/redis.config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
@@ -16,9 +16,7 @@ async function bootstrap(): Promise<void> {
 		await redisClient.connect();
 		logger.log('Connected to Redis');
 
-		app.setGlobalPrefix('api', {
-			exclude: [{ path: 'urls/:shortCode', method: RequestMethod.GET }],
-		});
+		app.setGlobalPrefix('api');
 		app.enableVersioning({
 			type: VersioningType.URI,
 			defaultVersion: '1',
