@@ -9,7 +9,6 @@ import { generateUrlCode } from '@/short-urls/util/generate-url-code';
 import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
-import { UsersService } from '@/users/users.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 
@@ -17,7 +16,6 @@ import { Queue } from 'bullmq';
 export class ShortUrlsService {
 	constructor(
 		private readonly logger: LoggerService,
-		private readonly userService: UsersService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 		@InjectQueue('notifyExpiredUrl') private queueService: Queue,
@@ -46,6 +44,7 @@ export class ShortUrlsService {
 	async redirectToOriginal(shortCode: string, shortURL: string): Promise<TemplateResponse> {
 		const urlData = await this.shortUrlRepository.findOne({
 			where: { short_code: shortCode },
+			withDeleted: true,
 			relations: ['user'],
 		});
 		if (!urlData) {
