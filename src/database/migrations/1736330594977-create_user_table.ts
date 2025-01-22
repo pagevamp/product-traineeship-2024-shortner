@@ -12,7 +12,7 @@ export class CreateUsersTable1737462505634 implements MigrationInterface {
             created_at TIMESTAMPTZ DEFAULT NOW(),
             updated_at TIMESTAMPTZ DEFAULT NOW(),
             deleted_at TIMESTAMPTZ DEFAULT NULL,
-            UNIQUE(email)
+            CONSTRAINT UQ_Users_Email UNIQUE (email)
             );`,
 		);
 	}
