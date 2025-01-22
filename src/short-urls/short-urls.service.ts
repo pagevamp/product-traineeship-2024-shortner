@@ -52,7 +52,11 @@ export class ShortUrlsService {
 		return code;
 	}
 	async redirectToOriginal(shortCode: string, shortURL: string): Promise<TemplateResponse> {
-		const urlData = await this.shortUrlRepository.findOneBy({ short_code: shortCode });
+		const urlData = await this.shortUrlRepository.findOne({
+			where: { short_code: shortCode },
+			withDeleted: true,
+			relations: ['user'],
+		});
 		if (!urlData) {
 			return {
 				status: HttpStatus.NOT_FOUND,

@@ -21,7 +21,7 @@ import { Request, Response } from 'express';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
 @UseGuards(AuthGuard)
-@Controller('urls')
+@Controller()
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
 	@Post()
@@ -39,7 +39,7 @@ export class ShortUrlsController {
 	@Get(':shortCode')
 	@Version(VERSION_NEUTRAL)
 	async redirect(@Param('shortCode') shortCode: string, @Res() res: Response, @Req() req: Request): Promise<void> {
-		if (req.params.shortCode === 'favicon.ico') res.status(204).end();
+		if (req.params.shortCode === 'favicon.ico') res.status(204);
 		const shortURL = `${req.headers.host}/${shortCode}`;
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
 		res.setHeader('Content-Type', 'text/html');
