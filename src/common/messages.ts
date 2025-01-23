@@ -3,7 +3,7 @@ export const successMessage = {
 	userFetched: 'User has been fetched successfully',
 	userVerified: 'User has been verified successfully',
 	verificationEmailSent: 'Verification Email has been sent successfully',
-	shortUrlCreated: 'Short URL created successfully',
+	shortUrlCreated: 'Short URL created successfylly',
 	loginSuccess: 'Login success',
 };
 
