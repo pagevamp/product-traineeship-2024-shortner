@@ -1,25 +1,27 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
-	Param,
 	Post,
+	Param,
 	Req,
 	Res,
-	UseGuards,
 	Version,
 	VERSION_NEUTRAL,
+	UseGuards,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ShortUrlsService } from '@/short-urls/short-urls.service';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
 import { SuccessResponse } from '@/common/response.interface';
 import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
-import { Request, Response } from 'express';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
+import { UpdateResult } from 'typeorm';
 @UseGuards(AuthGuard)
 @Controller()
 export class ShortUrlsController {
@@ -44,5 +46,10 @@ export class ShortUrlsController {
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
 		res.setHeader('Content-Type', 'text/html');
 		res.status(template.status).send(template.data);
+	}
+
+	@Delete('urls')
+	async delete(@Param('id') id: string): Promise<UpdateResult> {
+		return await this.shortUrlsService.deleteUrls(id);
 	}
 }
