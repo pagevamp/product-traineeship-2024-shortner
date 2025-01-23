@@ -1,15 +1,23 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateUserTable1736330594977 implements MigrationInterface {
-	name = 'CreateUserTable1736330594977';
-
+export class CreateUsersTable1737462505634 implements MigrationInterface {
 	public async up(queryRunner: QueryRunner): Promise<void> {
 		await queryRunner.query(
-			`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password_hash" character varying NOT NULL, "name" character varying NOT NULL, "verified_at" TIMESTAMP, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
+			`CREATE TABLE users(
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            email VARCHAR NOT NULL,
+            password_hash VARCHAR NOT NULL,
+            name VARCHAR NOT NULL,
+            verified_at TIMESTAMPTZ DEFAULT NULL,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            updated_at TIMESTAMPTZ DEFAULT NOW(),
+            deleted_at TIMESTAMPTZ DEFAULT NULL,
+            CONSTRAINT UQ_Users_Email UNIQUE (email)
+            );`,
 		);
 	}
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
-		await queryRunner.query(`DROP TABLE "users"`);
+		await queryRunner.query(`DROP TABLE users;`);
 	}
 }
