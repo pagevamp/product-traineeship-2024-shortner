@@ -5,6 +5,9 @@
 	"author": "",
 	"private": true,
 	"license": "UNLICENSED",
+	"engines": {
+		"node": ">=22.13.0"
+	},
 	"scripts": {
 		"build": "nest build",
 		"format": "prettier --write \"src/**/*.ts\"",
@@ -45,7 +48,7 @@
 		"class-validator": "^0.14.1",
 		"dotenv": "^16.4.7",
 		"express-rate-limit": "^7.5.0",
-		"nanoid": "v3",
+		"nanoid": "^5.0.9",
 		"nest-winston": "^1.9.7",
 		"nodemailer": "^6.9.16",
 		"pg": "^8.13.1",
