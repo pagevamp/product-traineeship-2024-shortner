@@ -11,6 +11,7 @@ import { UsersModule } from '@/users/users.module';
 import { AllExceptionsFilter } from '@/core/all-exceptions.filter';
 import { MailerModule } from '@/mailer/mailer.module';
 import { LoggerModule } from '@/logger/logger.module';
+import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
@@ -19,7 +20,9 @@ import { LoggerModule } from '@/logger/logger.module';
 		VerificationModule,
 		AuthModule,
 		MailerModule,
+		ShortUrlsModule,
 		LoggerModule,
+		ShortUrlsModule,
 	],
 	controllers: [AppController],
 	providers: [
