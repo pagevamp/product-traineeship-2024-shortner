@@ -32,7 +32,6 @@ import { BullModule } from '@nestjs/bullmq';
 		MailerModule,
 		ShortUrlsModule,
 		LoggerModule,
-		ShortUrlsModule,
 		CronModule,
 	],
 	controllers: [AppController],
