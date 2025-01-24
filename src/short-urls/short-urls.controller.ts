@@ -6,6 +6,7 @@ import {
 	HttpStatus,
 	Param,
 	Post,
+	Query,
 	Req,
 	Res,
 	UseGuards,
@@ -20,6 +21,8 @@ import { User } from '@/users/entities/user.entity';
 import { Request, Response } from 'express';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
+import { ShortUrl } from '@/short-urls/entities/short-url.entity';
+
 @UseGuards(AuthGuard)
 @Controller()
 export class ShortUrlsController {
@@ -33,6 +36,14 @@ export class ShortUrlsController {
 			status: HttpStatus.CREATED,
 			message: successMessage.shortUrlCreated,
 		};
+	}
+
+	@Get('urls')
+	@HttpCode(HttpStatus.OK)
+	async findAll(@Req() req: Request, @Query('expired') expired?: string): Promise<ShortUrl[]> {
+		const user = req.user as User;
+		const isExpired = expired === 'true';
+		return await this.shortUrlsService.findAllUrls(user, isExpired);
 	}
 
 	@Avoid()
