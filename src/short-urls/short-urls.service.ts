@@ -42,11 +42,10 @@ export class ShortUrlsService {
 		return existingUrl;
 	}
 
-	async findAllUrls(user: User, includeExpired?: string): Promise<ShortUrl[]> {
-		if (includeExpired === 'true') {
-			return await this.shortUrlRepository.find({ where: { user_id: user.id } });
-		}
-		return await this.shortUrlRepository.find({ where: { user_id: user.id, expires_at: MoreThan(new Date()) } });
+	async findAllUrls(user: User, includeExpired: boolean = false): Promise<ShortUrl[]> {
+		return await this.shortUrlRepository.find({
+			where: { user_id: user.id, expires_at: includeExpired ? undefined : MoreThan(new Date()) },
+		});
 	}
 
 	private async generateUniqueCode(retryCount = 0): Promise<string> {

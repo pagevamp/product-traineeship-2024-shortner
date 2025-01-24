@@ -38,6 +38,15 @@ export class ShortUrlsController {
 		};
 	}
 
+	@Get('urls')
+	@HttpCode(HttpStatus.OK)
+	async findAll(@Req() req: Request, @Query('expired') expired?: string): Promise<ShortUrl[]> {
+		const user = req.user as User;
+		const isExpired = expired === 'true';
+		console.log(typeof expired);
+		return await this.shortUrlsService.findAllUrls(user, isExpired);
+	}
+
 	@Avoid()
 	@Get(':shortCode')
 	@Version(VERSION_NEUTRAL)
@@ -47,11 +56,5 @@ export class ShortUrlsController {
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
 		res.setHeader('Content-Type', 'text/html');
 		res.status(template.status).send(template.data);
-	}
-	@Get()
-	@HttpCode(HttpStatus.OK)
-	async findAll(@Req() req: Request, @Query('expired') expired?: string): Promise<ShortUrl[]> {
-		const user = req.user as User;
-		return await this.shortUrlsService.findAllUrls(user, expired);
 	}
 }
