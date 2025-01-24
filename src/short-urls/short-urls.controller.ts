@@ -43,7 +43,6 @@ export class ShortUrlsController {
 	async findAll(@Req() req: Request, @Query('expired') expired?: string): Promise<ShortUrl[]> {
 		const user = req.user as User;
 		const isExpired = expired === 'true';
-		console.log(typeof expired);
 		return await this.shortUrlsService.findAllUrls(user, isExpired);
 	}
 
