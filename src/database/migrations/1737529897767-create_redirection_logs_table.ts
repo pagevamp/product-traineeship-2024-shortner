@@ -13,6 +13,7 @@ export class CreateRedirectionLogsTable1737529897767 implements MigrationInterfa
             user_agent character varying,
             browser character varying(100),
             device character varying(100),
+            operating_system character varying(100),
             CONSTRAINT FK_redirection_logs_shortened_urls FOREIGN KEY (short_url_id)
                 REFERENCES shortened_urls (id)
                 ON DELETE CASCADE

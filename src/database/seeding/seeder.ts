@@ -59,7 +59,8 @@ export async function seedDatabase(dataSource: DataSource) {
 	const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera'];
 	const devices = ['Desktop', 'Mobile', 'Tablet'];
 	const ips = ['192.168.0.1', '10.0.0.2', '172.16.0.3', '203.0.113.4', '8.8.8.8'];
-	const countries = ['NP', 'IN', 'CN', 'US', 'RU'];
+	const countries = ['Nepal', 'India', 'China', 'USA', 'Russia'];
+	const operatingSystems = ['Android', 'iOS', 'Windows', 'MacOs', 'Linux'];
 
 	shortenedUrls.forEach((shortenedUrl) => {
 		for (let i = 0; i < 200; i++) {
@@ -69,9 +70,10 @@ export async function seedDatabase(dataSource: DataSource) {
 					user_id: shortenedUrl.user_id,
 					clicked_at: new Date(Date.now() - (i % 10) * 24 * 60 * 60 * 1000),
 					ip_address: ips[i % ips.length],
-					user_agent: `Browser/${browsers[i % browsers.length]} Device/${devices[i % devices.length]}`,
+					user_agent: `Browser/${browsers[i % browsers.length]} OS/${operatingSystems[i % operatingSystems.length]} Device/${devices[i % devices.length]}`,
 					browser: browsers[i % browsers.length],
 					device: devices[i % devices.length],
+					operating_system: operatingSystems[i % operatingSystems.length],
 					country: countries[i % countries.length],
 				}),
 			);

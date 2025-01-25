@@ -38,4 +38,7 @@ export class UrlAnalytics {
 
 	@Column({ type: 'varchar', length: 100, nullable: true })
 	device: string;
+
+	@Column({ type: 'varchar', length: 100, nullable: true })
+	operating_system: string;
 }
