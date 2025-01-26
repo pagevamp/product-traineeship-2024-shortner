@@ -9,6 +9,7 @@ import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
 import { TemplateResponse } from '@/common/response.interface';
 import { HTMLTemplateForRedirection } from '@/template/redirect.template';
+import { UrlAnalyticsService } from '@/url-analytics/url-analytics.service';
 
 @Injectable()
 export class ShortUrlsService {
@@ -16,6 +17,7 @@ export class ShortUrlsService {
 		private readonly logger: LoggerService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
+		private readonly analyticsService: UrlAnalyticsService,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
 	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
@@ -51,7 +53,11 @@ export class ShortUrlsService {
 		}
 		return code;
 	}
-	async redirectToOriginal(shortCode: string, shortURL: string): Promise<TemplateResponse> {
+	async redirectToOriginal(
+		shortCode: string,
+		shortURL: string,
+		analyticsPayload: { userAgent: string; ipAddress: string },
+	): Promise<TemplateResponse> {
 		const urlData = await this.shortUrlRepository.findOne({
 			where: { short_code: shortCode },
 			withDeleted: true,
@@ -63,7 +69,10 @@ export class ShortUrlsService {
 				data: await this.template.pageNotFoundTemp(),
 			};
 		}
-		const { original_url, user, expires_at } = urlData;
+		const { id, original_url, user, expires_at } = urlData;
+
+		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload });
+
 		if (new Date() > expires_at) {
 			return {
 				status: HttpStatus.OK,
