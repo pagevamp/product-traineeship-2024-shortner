@@ -6,6 +6,7 @@ import { LoggerService } from '@/logger/logger.service';
 import { CreateUrlAnalyticsDto } from '@/url-analytics/dto/create-analytics.dto';
 import { lookup } from 'geoip-country';
 import { UAParser } from 'ua-parser-js';
+import { AnalyticsQueryDto } from '@/url-analytics/dto/query-analytics.dto';
 
 @Injectable()
 export class UrlAnalyticsService {
@@ -26,9 +27,9 @@ export class UrlAnalyticsService {
 				user_id: userId,
 				user_agent: userAgent,
 				ip_address: ipAddress,
-				browser,
-				device,
-				operating_system: os,
+				browser: browser?.toLowerCase(),
+				device: device?.toLowerCase(),
+				operating_system: os?.toLowerCase(),
 				country,
 			};
 			const redirectionLogs = await this.analyticsRepo.insert(analytics);
@@ -39,22 +40,57 @@ export class UrlAnalyticsService {
 		}
 	}
 
-	async getUserSpecificAnalysis(userId: string): Promise<UrlAnalytics[]> {
-		const reports = await this.analyticsRepo.find({
-			where: {
-				user_id: userId,
-			},
-			select: {
-				id: true,
-				short_url_id: true,
-				clicked_at: true,
-				ip_address: true,
-				country: true,
-				browser: true,
-				device: true,
-				operating_system: true,
-			},
-		});
+	async getUserSpecificAnalysis(userId: string, query: AnalyticsQueryDto): Promise<UrlAnalytics[]> {
+		const { from, to, browser, device, os, groupBy, clicked_at } = query;
+		const fromDate = new Date(from);
+		const toDate = new Date(to);
+		const clickedAtDate = new Date(clicked_at);
+		const eod = new Date(clicked_at);
+		eod.setDate(eod.getDate() + 1);
+		const queryBuilder = this.analyticsRepo
+			.createQueryBuilder('redirection_logs')
+			.select([
+				`redirection_logs.id AS id`,
+				`redirection_logs.short_url_id AS urlId`,
+				`redirection_logs.clicked_at AS clickedAt`,
+				`redirection_logs.country AS country`,
+				`redirection_logs.operating_system AS operatingSystem`,
+				`redirection_logs.device AS device`,
+				`redirection_logs.browser AS browser`,
+			])
+			.where('user_id = :userId', { userId });
+		if (from && to) {
+			queryBuilder.andWhere('redirection_logs.clicked_at >= :from AND redirection_logs.clicked_at <= :to', {
+				from: fromDate,
+				to: toDate,
+			});
+		}
+		if (from) queryBuilder.andWhere('redirection_logs.clicked_at >= :from', { from: fromDate });
+		if (to) queryBuilder.andWhere('redirection_logs.clicked_at <= :to', { to: toDate });
+		if (device) queryBuilder.andWhere('redirection_logs.device = :device', { device });
+		if (browser) queryBuilder.andWhere('redirection_logs.browser = :browser', { browser });
+		if (os) queryBuilder.andWhere('redirection_logs.operating_system = :device', { os });
+		if (clicked_at)
+			queryBuilder.andWhere('redirection_logs.clicked_at >= :clickedAtDate AND redirection_logs.clicked_at < :eod', {
+				clickedAtDate,
+				eod,
+			});
+		if (groupBy) {
+			if (groupBy == 'clicked_at') {
+				queryBuilder
+					.select([
+						`DATE(redirection_logs.${groupBy}) AS ${groupBy} `,
+						`COUNT(redirection_logs.${groupBy}) AS numberOfHits`,
+					])
+					.groupBy(`DATE(redirection_logs.${groupBy})`);
+			} else {
+				queryBuilder
+					.select([`redirection_logs.${groupBy} AS ${groupBy} `, `COUNT(redirection_logs.${groupBy}) AS numberOfHits`])
+					.groupBy(`redirection_logs.${groupBy} `);
+			}
+		}
+		const reports = await queryBuilder.getRawMany();
+
 		return reports;
 	}
 

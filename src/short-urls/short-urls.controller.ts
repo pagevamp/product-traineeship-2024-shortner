@@ -21,7 +21,7 @@ import { Request, Response } from 'express';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
 @UseGuards(AuthGuard)
-@Controller()
+@Controller('urls')
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
 	@Post()
