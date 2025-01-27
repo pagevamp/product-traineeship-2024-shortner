@@ -71,7 +71,7 @@ export class ShortUrlsService {
 		}
 		const { id, original_url, user, expires_at } = urlData;
 
-		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload });
+		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload, shortURL });
 
 		if (new Date() > expires_at) {
 			return {

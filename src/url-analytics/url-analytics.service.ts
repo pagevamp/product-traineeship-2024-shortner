@@ -17,11 +17,12 @@ export class UrlAnalyticsService {
 
 	async createAnalytics(records: CreateUrlAnalyticsDto): Promise<void> {
 		try {
-			const { shortUrlId, userAgent, userId, ipAddress } = records;
+			const { shortUrlId, userAgent, userId, ipAddress, shortURL } = records;
 			const { browser, device, os } = await this.parseUserAgent(userAgent);
 			const country = await this.getCountryFromIP(ipAddress);
 			const analytics = {
 				short_url_id: shortUrlId,
+				shortURL,
 				user_id: userId,
 				user_agent: userAgent,
 				ip_address: ipAddress,
@@ -43,6 +44,16 @@ export class UrlAnalyticsService {
 			where: {
 				user_id: userId,
 			},
+			select: {
+				id: true,
+				short_url_id: true,
+				clicked_at: true,
+				ip_address: true,
+				country: true,
+				browser: true,
+				device: true,
+				operating_system: true,
+			},
 		});
 		return reports;
 	}
@@ -62,6 +73,7 @@ export class UrlAnalyticsService {
 
 	private async getCountryFromIP(ip: string): Promise<string | undefined> {
 		const location = lookup(ip);
+		console.log(location);
 		return location?.country;
 	}
 }

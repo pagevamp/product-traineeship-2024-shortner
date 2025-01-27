@@ -3,4 +3,5 @@ export class CreateUrlAnalyticsDto {
 	userId: string;
 	ipAddress: string;
 	userAgent: string;
+	shortURL: string;
 }

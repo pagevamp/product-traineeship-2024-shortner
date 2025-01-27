@@ -12,8 +12,7 @@ export class UrlAnalyticsController {
 	@Get()
 	async generateReportForUser(@Req() req: Request): Promise<UrlAnalytics[]> {
 		const { id } = req.user as User;
-		console.log(id);
-		const reports = await this.analyticsService.getUserSpecificAnalysis('80ef8776-b5c1-445d-a8d5-1177f937ed5f');
+		const reports = await this.analyticsService.getUserSpecificAnalysis(id);
 		return reports;
 	}
 }
