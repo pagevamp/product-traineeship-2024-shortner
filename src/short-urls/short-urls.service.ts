@@ -20,7 +20,10 @@ export class ShortUrlsService {
 		private readonly analyticsService: UrlAnalyticsService,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
-	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
+	async createShortUrl(
+		user: User,
+		{ originalUrl, expiryDate }: CreateShortUrlDto,
+	): Promise<Pick<ShortUrl, 'user_id' | 'original_url' | 'expires_at' | 'short_code'>> {
 		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
 			user_id: user.id,

@@ -22,7 +22,6 @@ import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 		MailerModule,
 		ShortUrlsModule,
 		LoggerModule,
-		ShortUrlsModule,
 	],
 	controllers: [AppController],
 	providers: [

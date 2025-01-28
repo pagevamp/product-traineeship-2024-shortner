@@ -24,7 +24,7 @@ import { Avoid } from '@/decorator/avoid-guard.decorator';
 @Controller()
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
-	@Post()
+	@Post('urls')
 	@HttpCode(HttpStatus.CREATED)
 	async create(@Req() req: Request, @Body() createShortUrlDto: CreateShortUrlDto): Promise<SuccessResponse> {
 		const user = req.user as User;
