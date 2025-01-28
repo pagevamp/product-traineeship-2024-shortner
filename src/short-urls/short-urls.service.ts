@@ -56,6 +56,7 @@ export class ShortUrlsService {
 		}
 		return code;
 	}
+
 	async redirectToOriginal(
 		shortCode: string,
 		shortURL: string,
@@ -74,7 +75,7 @@ export class ShortUrlsService {
 		}
 		const { id, original_url, user, expires_at } = urlData;
 
-		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload, shortURL });
+		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload });
 
 		if (new Date() > expires_at) {
 			return {

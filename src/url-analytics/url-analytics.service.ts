@@ -17,12 +17,11 @@ export class UrlAnalyticsService {
 
 	async createAnalytics(records: CreateUrlAnalyticsDto): Promise<void> {
 		try {
-			const { shortUrlId, userAgent, userId, ipAddress, shortURL } = records;
+			const { shortUrlId, userAgent, userId, ipAddress } = records;
 			const { browser, device, os } = await this.parseUserAgent(userAgent);
 			const country = await this.getCountryFromIP(ipAddress);
 			const analytics = {
 				short_url_id: shortUrlId,
-				shortURL,
 				user_id: userId,
 				user_agent: userAgent,
 				ip_address: ipAddress,
