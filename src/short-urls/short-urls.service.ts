@@ -4,7 +4,7 @@ import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
 import { errorMessage, successMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, Repository, TypeORMError, UpdateResult } from 'typeorm';
+import { LessThan,MoreThan, Repository, TypeORMError, UpdateResult } from 'typeorm';
 import { generateUrlCode } from '@/short-urls/util/generate-url-code';
 import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
@@ -44,6 +44,26 @@ export class ShortUrlsService {
 		const existingUrl = await this.shortUrlRepository.findOneBy({ short_code: urlCode });
 		return existingUrl;
 	}
+
+	async findAllUrls(user: User, includeExpired: boolean = false): Promise<ShortUrl[]> {
+		return await this.shortUrlRepository.find({
+			where: { user_id: user.id, expires_at: includeExpired ? undefined : MoreThan(new Date()) },
+		});
+	}
+
+	private async generateUniqueCode(retryCount = 0): Promise<string> {
+		if (retryCount >= 10) {
+			throw new Error(errorMessage.shortCodeGenerationFailed);
+		}
+		const code = generateUrlCode();
+		const existingUrl = await this.findByCode(code);
+		if (existingUrl) {
+			this.logger.warn(`${code} already exists. Attempt ${retryCount + 1} out of 10`);
+			return this.generateUniqueCode(retryCount + 1);
+		}
+		return code;
+	}
+  
 	async redirectToOriginal(shortCode: string, shortURL: string): Promise<TemplateResponse> {
 		const urlData = await this.shortUrlRepository.findOne({
 			where: { short_code: shortCode },
