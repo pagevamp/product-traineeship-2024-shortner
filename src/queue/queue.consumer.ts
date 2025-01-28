@@ -9,7 +9,7 @@ import { errorMessage } from '@/common/messages';
 @Processor('notifyExpiredUrl')
 export class ExpiryEmailConsumer extends WorkerHost {
 	constructor(
-		private mailerService: MailerService,
+		private readonly mailerService: MailerService,
 		private readonly shortUrlService: ShortUrlsService,
 		private readonly logger: LoggerService,
 	) {
