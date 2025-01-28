@@ -52,7 +52,11 @@ export class ShortUrlsController {
 	async redirect(@Param('shortCode') shortCode: string, @Res() res: Response, @Req() req: Request): Promise<void> {
 		if (req.params.shortCode === 'favicon.ico') res.status(204);
 		const shortURL = `${req.headers.host}/${shortCode}`;
-		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
+		const analyticsPayload = {
+			userAgent: req.headers['user-agent'] as string,
+			ipAddress: (req.headers['x-forwarded-for'] || req.headers.forwarded || req.ip) as string,
+		};
+		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL, analyticsPayload);
 		res.setHeader('Content-Type', 'text/html');
 		res.status(template.status).send(template.data);
 	}

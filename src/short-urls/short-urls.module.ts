@@ -4,9 +4,10 @@ import { ShortUrlsController } from '@/short-urls/short-urls.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { UsersModule } from '@/users/users.module';
+import { UrlAnalyticsModule } from '@/url-analytics/url-analytics.module';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([ShortUrl]), UsersModule],
+	imports: [TypeOrmModule.forFeature([ShortUrl]), UsersModule, UrlAnalyticsModule],
 	controllers: [ShortUrlsController],
 	providers: [ShortUrlsService],
 })
