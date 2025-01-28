@@ -4,6 +4,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Ip,
 	Param,
 	Post,
 	Query,
@@ -49,12 +50,17 @@ export class ShortUrlsController {
 	@Avoid()
 	@Get(':shortCode')
 	@Version(VERSION_NEUTRAL)
-	async redirect(@Param('shortCode') shortCode: string, @Res() res: Response, @Req() req: Request): Promise<void> {
+	async redirect(
+		@Param('shortCode') shortCode: string,
+		@Res() res: Response,
+		@Ip() ip: string,
+		@Req() req: Request,
+	): Promise<void> {
 		if (req.params.shortCode === 'favicon.ico') res.status(204);
 		const shortURL = `${req.headers.host}/${shortCode}`;
 		const analyticsPayload = {
 			userAgent: req.headers['user-agent'] as string,
-			ipAddress: req.ip as string,
+			ipAddress: ip,
 		};
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL, analyticsPayload);
 		res.setHeader('Content-Type', 'text/html');
