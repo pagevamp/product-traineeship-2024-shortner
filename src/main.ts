@@ -5,12 +5,14 @@ import { env } from '@/config/env.config';
 import { ValidationPipe, RequestMethod } from '@nestjs/common';
 import { redisClient } from '@/config/redis.config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap(): Promise<void> {
 	const logger = new Logger();
 	const port = env.APP_PORT;
 	try {
-		const app = await NestFactory.create(AppModule);
+		const app = await NestFactory.create<NestExpressApplication>(AppModule);
+		app.set('trust proxy', true);
 		app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 		app.useGlobalPipes(new ValidationPipe());
 		await redisClient.connect();
