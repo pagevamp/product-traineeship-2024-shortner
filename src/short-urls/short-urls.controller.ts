@@ -54,7 +54,7 @@ export class ShortUrlsController {
 		const shortURL = `${req.headers.host}/${shortCode}`;
 		const analyticsPayload = {
 			userAgent: req.headers['user-agent'] as string,
-			ipAddress: (req.headers['x-forwarded-for'] || req.headers.forwarded || req.ip) as string,
+			ipAddress: req.ip as string,
 		};
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL, analyticsPayload);
 		res.setHeader('Content-Type', 'text/html');
