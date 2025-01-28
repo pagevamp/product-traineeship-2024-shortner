@@ -42,7 +42,7 @@ export class UrlAnalyticsService {
 	}
 
 	async getUserSpecificAnalysis(userId: string, query: AnalyticsQueryDto): Promise<UrlAnalytics[]> {
-		const { from, to, browser, device, os, groupBy, clicked_at } = query;
+		const { from, to, browser, device, os, groupBy, clicked_at, country } = query;
 		const queryBuilder = this.analyticsRepo
 			.createQueryBuilder('redirection_logs')
 			.select([
@@ -61,9 +61,22 @@ export class UrlAnalyticsService {
 				to: to ? new Date(to) : new Date(),
 			});
 		}
-		if (device) queryBuilder.andWhere('redirection_logs.device = :device', { device });
-		if (browser) queryBuilder.andWhere('redirection_logs.browser = :browser', { browser });
-		if (os) queryBuilder.andWhere('redirection_logs.operating_system = :device', { os });
+		if (device) {
+			const deviceArr: string[] = device.includes(',') ? device.split(',') : [device];
+			queryBuilder.andWhere('redirection_logs.device IN (:...deviceArr)', { deviceArr });
+		}
+		if (browser) {
+			const browserArr: string[] = browser.includes(',') ? browser.split(',') : [browser];
+			queryBuilder.andWhere('redirection_logs.browser IN (:...browserArr)', { browserArr });
+		}
+		if (os) {
+			const osArr: string[] = os.includes(',') ? os.split(',') : [os];
+			queryBuilder.andWhere('redirection_logs.operating_system IN (:...osArr)', { osArr });
+		}
+		if (country) {
+			const countryArr: string[] = country.includes(',') ? country.split(',') : [country];
+			queryBuilder.andWhere('redirection_logs.country IN (:...countryArr)', { countryArr });
+		}
 		if (clicked_at) {
 			const clickedAtDate = new Date(clicked_at);
 			const eod = new Date(clicked_at);
@@ -75,22 +88,22 @@ export class UrlAnalyticsService {
 		}
 
 		if (groupBy) {
-			switch (groupBy) {
-				case 'clicked_at':
-					queryBuilder
-						.select([
-							`DATE(redirection_logs.${groupBy}) AS ${groupBy} `,
-							`COUNT(redirection_logs.${groupBy}) AS numberOfHits`,
-						])
-						.groupBy(`DATE(redirection_logs.${groupBy})`);
-					break;
-				default:
-					queryBuilder
-						.select([
-							`redirection_logs.${groupBy} AS ${groupBy} `,
-							`COUNT(redirection_logs.${groupBy}) AS numberOfHits`,
-						])
-						.groupBy(`redirection_logs.${groupBy} `);
+			const grpByArr = groupBy.includes(',') ? groupBy.split(',') : [groupBy];
+			queryBuilder.select(`COUNT(redirection_logs.id) AS numberOfHits`);
+
+			for (let i = 0; i < grpByArr.length; i++) {
+				switch (grpByArr[i]) {
+					case 'clicked_at':
+						queryBuilder
+							.addSelect([`DATE(redirection_logs.${grpByArr[i]}) AS ${grpByArr[i]} `])
+							.addGroupBy(`DATE(redirection_logs.${grpByArr[i]})`);
+
+						break;
+					default:
+						queryBuilder
+							.addSelect([`redirection_logs.${grpByArr[i]} AS ${grpByArr[i]} `])
+							.addGroupBy(`redirection_logs.${grpByArr[i]} `);
+				}
 			}
 		}
 		const reports = await queryBuilder.getRawMany();
