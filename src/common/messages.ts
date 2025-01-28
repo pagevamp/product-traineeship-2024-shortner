@@ -3,8 +3,10 @@ export const successMessage = {
 	userFetched: 'User has been fetched successfully',
 	userVerified: 'User has been verified successfully',
 	verificationEmailSent: 'Verification Email has been sent successfully',
-	shortUrlCreated: 'Short URL created successfylly',
+	shortUrlCreated: 'Short URL created successfully',
 	loginSuccess: 'Login success',
+	redirectionLogsSuccessful: 'Redirection logs created successfully',
+	fetchedAnalytics: 'Redirection logs for given user has been fetched',
 };
 
 export const errorMessage = {
