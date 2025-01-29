@@ -12,8 +12,8 @@ import { LoggerService } from '@/logger/logger.service';
 @Injectable()
 export class UrlAnalyticsService {
 	constructor(
-		@InjectRepository(UrlAnalytics)
 		private logger: LoggerService,
+		@InjectRepository(UrlAnalytics)
 		private analyticsRepo: Repository<UrlAnalytics>,
 	) {}
 
@@ -49,7 +49,7 @@ export class UrlAnalyticsService {
 			])
 			.where('user_id = :userId', { userId });
 		if (from || to) {
-			queryBuilder.andWhere('redirection_logs.clicked_at BETWEEN :from AND :to', {
+			queryBuilder.andWhere('DATE(redirection_logs.clicked_at) BETWEEN :from AND :to', {
 				from: from ? new Date(from) : new Date(0),
 				to: to ? new Date(to) : new Date(),
 			});
