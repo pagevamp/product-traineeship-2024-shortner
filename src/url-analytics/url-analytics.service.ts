@@ -35,7 +35,21 @@ export class UrlAnalyticsService {
 	}
 
 	async getUserSpecificAnalysis(userId: string, query: AnalyticsQueryDto): Promise<UrlAnalytics[]> {
-		const { startDate, endDate, browser, device, os, groupBy, clickedAt, country, urlId } = query;
+		const {
+			startDate,
+			endDate,
+			browser,
+			device,
+			os,
+			groupBy,
+			clickedAt,
+			country,
+			urlId,
+			page = 1,
+			limit = 10,
+			sortBy = 'clicked_at',
+			order = 'DESC',
+		} = query;
 		const queryBuilder = this.analyticsRepo
 			.createQueryBuilder('logs')
 			.leftJoin('logs.short_url', 'shortUrl')
@@ -103,6 +117,10 @@ export class UrlAnalyticsService {
 				}
 			}
 		}
+		queryBuilder.orderBy(`logs.${sortBy}`, order);
+		const skip = (page - 1) * limit;
+		queryBuilder.skip(skip).limit(limit);
+
 		const reports = await queryBuilder.getRawMany();
 		this.logger.log(successMessage.fetchedAnalytics);
 		return reports;

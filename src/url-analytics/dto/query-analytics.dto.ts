@@ -43,4 +43,16 @@ export class AnalyticsQueryDto {
 	@IsString()
 	@IsOptional()
 	urlId: string;
+
+	@IsOptional()
+	page?: number;
+
+	@IsOptional()
+	limit?: number;
+
+	@IsString()
+	@IsOptional()
+	sortBy?: string;
+
+	order?: 'ASC' | 'DESC';
 }
