@@ -22,9 +22,9 @@ export class UrlAnalyticsService {
 			user_id: userId,
 			user_agent: userAgent,
 			ip_address: ipAddress,
-			browser,
-			device,
-			operating_system: os,
+			browser: browser?.toLowerCase(),
+			device: device?.toLowerCase(),
+			operating_system: os?.toLowerCase(),
 			country,
 		};
 		await this.analyticsRepo.insert(analytics);
@@ -34,12 +34,12 @@ export class UrlAnalyticsService {
 		userAgent: string,
 	): Promise<{ browser: string | undefined; device: string | undefined; os: string | undefined }> {
 		const parsedUA = UAParser(userAgent);
-		let browser = parsedUA.browser.name ?? 'Unknown';
+		let browser = parsedUA.browser.name ?? 'unknown';
 		if (browser.startsWith('Mobile ')) {
 			browser = browser.replace('Mobile ', '');
 		}
-		const device = parsedUA.device.type ?? 'Desktop';
-		const os = parsedUA.os.name ?? 'Unknown';
+		const device = parsedUA.device.type ?? 'desktop';
+		const os = parsedUA.os.name ?? 'unknown';
 		return { browser, device, os };
 	}
 
