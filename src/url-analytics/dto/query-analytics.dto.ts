@@ -1,13 +1,19 @@
-import { IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDate, IsOptional, IsString, MaxDate, Validate } from 'class-validator';
+import { FilterDate } from '@/url-analytics/validator/filter-date.validator';
 
 export class AnalyticsQueryDto {
-	@IsString()
+	@IsDate()
 	@IsOptional()
-	from: string;
+	@Transform(({ value }) => new Date(value), { toClassOnly: true })
+	startDate: Date;
 
-	@IsString()
+	@IsDate()
 	@IsOptional()
-	to: string;
+	@Transform(({ value }) => new Date(value), { toClassOnly: true })
+	@MaxDate(new Date())
+	@Validate(FilterDate)
+	endDate: Date;
 
 	@IsString()
 	@IsOptional()
@@ -29,7 +35,12 @@ export class AnalyticsQueryDto {
 	@IsOptional()
 	groupBy: string;
 
+	@IsDate()
+	@IsOptional()
+	@Transform(({ value }) => new Date(value), { toClassOnly: true })
+	clickedAt: Date;
+
 	@IsString()
 	@IsOptional()
-	clicked_at: string;
+	urlId: string;
 }
