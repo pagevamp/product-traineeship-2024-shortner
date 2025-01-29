@@ -1,5 +1,5 @@
 export const authRateLimiter = {
-	max: 10,
+	max: 2,
 	windowMs: 15 * 60 * 1000,
 };
 
