@@ -11,10 +11,12 @@ import { UsersModule } from '@/users/users.module';
 import { AllExceptionsFilter } from '@/core/all-exceptions.filter';
 import { MailerModule } from '@/mailer/mailer.module';
 import { LoggerModule } from '@/logger/logger.module';
+import { HealthModule } from '@/health/health.module';
 import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from '@/cron/cron.module';
 import { BullModule } from '@nestjs/bullmq';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
@@ -33,6 +35,7 @@ import { BullModule } from '@nestjs/bullmq';
 		ShortUrlsModule,
 		LoggerModule,
 		CronModule,
+		HealthModule,
 	],
 	controllers: [AppController],
 	providers: [
