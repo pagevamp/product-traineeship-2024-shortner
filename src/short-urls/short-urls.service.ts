@@ -99,18 +99,23 @@ export class ShortUrlsService {
 		if (expiredUrls.length == 0) {
 			this.logger.log(successMessage.noExpiredUrls);
 		}
+		const resolveBulkQueue = [];
 		for (const url of expiredUrls) {
-			await this.queueService.add(
-				'notifyExpiredUrl',
-				{
-					id: url.id,
-					email: url.user.email,
-					shortCode: url.short_code,
-					name: url.user.name,
-				},
-				{ removeOnComplete: true, delay: 2000, attempts: 5, jobId: `notifyExpiredUrl-${url.id}` },
+			resolveBulkQueue.push(
+				await this.queueService.add(
+					'notifyExpiredUrl',
+					{
+						id: url.id,
+						email: url.user.email,
+						shortCode: url.short_code,
+						name: url.user.name,
+					},
+					{ removeOnComplete: true, delay: 2000, attempts: 5, jobId: `notifyExpiredUrl-${url.id}` },
+				),
 			);
 		}
+
+		await Promise.all(resolveBulkQueue);
 	}
 
 	async deleteUrls(id: string): Promise<UpdateResult> {

@@ -31,7 +31,6 @@ export class ExpiryEmailConsumer extends WorkerHost {
 	onActive(job: Job): void {
 		this.logger.log(`Processing job ${job.id} of type ${job.name} }`);
 	}
-
 	@OnWorkerEvent('completed')
 	onComplete(job: Job): void {
 		this.logger.log(`Job with id ${job.id} of type ${job.name} has been completed`);
@@ -39,7 +38,7 @@ export class ExpiryEmailConsumer extends WorkerHost {
 
 	@OnWorkerEvent('failed')
 	async onFailed(job: Job, err: Error): Promise<void> {
-		this.logger.log(`${errorMessage.jobFailed} ${job.id} of type ${job.name} \n ${err.message}`);
+		this.logger.error(`${errorMessage.jobFailed} ${job.id} of type ${job.name} \n ${err.message}`);
 		if (job.attemptsMade >= (job.opts.attempts || 5)) {
 			this.logger.log(`${errorMessage.emailSendFailed} ${job.data.email}`);
 			this.logger.log(`${errorMessage.jobRemoved} ${job.id}`);
