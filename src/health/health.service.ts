@@ -32,7 +32,7 @@ export class HealthService {
 	}
 
 	async checkDiskStorage(): Promise<HealthIndicatorResult> {
-		return this.disk.checkStorage('storage', { thresholdPercent: 0.8, path: '/' });
+		return this.disk.checkStorage('storage', { thresholdPercent: 0.5, path: '/' });
 	}
 
 	async checkRedis(): Promise<HealthIndicatorResult> {
