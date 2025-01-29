@@ -20,7 +20,10 @@ export class ShortUrlsService {
 		private readonly analyticsService: UrlAnalyticsService,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
-	async createShortUrl(user: User, { originalUrl, expiryDate }: CreateShortUrlDto): Promise<Partial<ShortUrl>> {
+	async createShortUrl(
+		user: User,
+		{ originalUrl, expiryDate }: CreateShortUrlDto,
+	): Promise<Pick<ShortUrl, 'user_id' | 'original_url' | 'expires_at' | 'short_code'>> {
 		const urlCode = await this.generateUniqueCode();
 		const shortUrl = {
 			user_id: user.id,
@@ -53,6 +56,7 @@ export class ShortUrlsService {
 		}
 		return code;
 	}
+
 	async redirectToOriginal(
 		shortCode: string,
 		shortURL: string,
@@ -71,7 +75,7 @@ export class ShortUrlsService {
 		}
 		const { id, original_url, user, expires_at } = urlData;
 
-		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload, shortURL });
+		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload });
 
 		if (new Date() > expires_at) {
 			return {

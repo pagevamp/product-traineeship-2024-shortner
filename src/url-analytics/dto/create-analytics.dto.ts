@@ -1,18 +1,12 @@
-import { IsString } from 'class-validator';
+import { IsIP, IsString, IsUUID } from 'class-validator';
 
 export class CreateUrlAnalyticsDto {
-	@IsString()
+	@IsUUID()
 	shortUrlId: string;
-
-	@IsString()
+	@IsUUID()
 	userId: string;
-
-	@IsString()
+	@IsIP()
 	ipAddress: string;
-
 	@IsString()
 	userAgent: string;
-
-	@IsString()
-	shortURL: string;
 }
