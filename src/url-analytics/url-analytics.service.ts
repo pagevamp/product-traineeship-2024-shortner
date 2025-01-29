@@ -35,67 +35,71 @@ export class UrlAnalyticsService {
 	}
 
 	async getUserSpecificAnalysis(userId: string, query: AnalyticsQueryDto): Promise<UrlAnalytics[]> {
-		const { from, to, browser, device, os, groupBy, clicked_at, country } = query;
+		const { startDate, endDate, browser, device, os, groupBy, clickedAt, country, urlId } = query;
 		const queryBuilder = this.analyticsRepo
-			.createQueryBuilder('redirection_logs')
+			.createQueryBuilder('logs')
+			.leftJoin('logs.short_url', 'shortUrl')
 			.select([
-				`redirection_logs.id AS id`,
-				`redirection_logs.short_url_id AS urlId`,
-				`redirection_logs.clicked_at AS clickedAt`,
-				`redirection_logs.country AS country`,
-				`redirection_logs.operating_system AS operatingSystem`,
-				`redirection_logs.device AS device`,
-				`redirection_logs.browser AS browser`,
+				`logs.id AS id`,
+				`logs.short_url_id AS "urlId"`,
+				`shortUrl.short_code AS "urlCode"`,
+				`shortUrl.original_url AS "originalUrl"`,
+				`logs.clicked_at AS "clickedAt"`,
+				`logs.country AS country`,
+				`logs.operating_system AS "OS"`,
+				`logs.device AS device`,
+				`logs.browser AS browser`,
 			])
-			.where('user_id = :userId', { userId });
-		if (from || to) {
-			queryBuilder.andWhere('DATE(redirection_logs.clicked_at) BETWEEN :from AND :to', {
-				from: from ? new Date(from) : new Date(0),
-				to: to ? new Date(to) : new Date(),
+			.where('shortUrl.user_id = :userId', { userId });
+		if (startDate || endDate) {
+			queryBuilder.andWhere('DATE(logs.clicked_at) BETWEEN :startDate AND :endDate', {
+				startDate: startDate ?? new Date(0),
+				endDate: endDate ?? new Date(),
 			});
 		}
 		if (device) {
 			const deviceArr: string[] = device.includes(',') ? device.split(',') : [device];
-			queryBuilder.andWhere('redirection_logs.device IN (:...deviceArr)', { deviceArr });
+			queryBuilder.andWhere('logs.device IN (:...deviceArr)', { deviceArr });
 		}
 		if (browser) {
 			const browserArr: string[] = browser.includes(',') ? browser.split(',') : [browser];
-			queryBuilder.andWhere('redirection_logs.browser IN (:...browserArr)', { browserArr });
+			queryBuilder.andWhere('logs.browser IN (:...browserArr)', { browserArr });
 		}
 		if (os) {
 			const osArr: string[] = os.includes(',') ? os.split(',') : [os];
-			queryBuilder.andWhere('redirection_logs.operating_system IN (:...osArr)', { osArr });
+			queryBuilder.andWhere('logs.operating_system IN (:...osArr)', { osArr });
 		}
 		if (country) {
 			const countryArr: string[] = country.includes(',') ? country.split(',') : [country];
-			queryBuilder.andWhere('redirection_logs.country IN (:...countryArr)', { countryArr });
+			queryBuilder.andWhere('logs.country IN (:...countryArr)', { countryArr });
 		}
-		if (clicked_at) {
-			const clickedAtDate = new Date(clicked_at);
-			const eod = new Date(clicked_at);
+		if (urlId) {
+			const urlIdArr: string[] = urlId.includes(',') ? urlId.split(',') : [urlId];
+			queryBuilder.andWhere('logs.short_url_id IN (:...urlIdArr)', { urlIdArr });
+		}
+		if (clickedAt) {
+			const eod = new Date(clickedAt);
 			eod.setDate(eod.getDate() + 1);
-			queryBuilder.andWhere('redirection_logs.clicked_at >= :clickedAtDate AND redirection_logs.clicked_at < :eod', {
-				clickedAtDate,
+			queryBuilder.andWhere('logs.clicked_at >= :clickedAt AND logs.clicked_at < :eod', {
+				clickedAt,
 				eod,
 			});
 		}
 
 		if (groupBy) {
 			const grpByArr = groupBy.includes(',') ? groupBy.split(',') : [groupBy];
-			queryBuilder.select(`COUNT(redirection_logs.id) AS numberOfHits`);
+			queryBuilder.select(`COUNT(logs.id) AS numberOfHits`);
 
 			for (let i = 0; i < grpByArr.length; i++) {
 				switch (grpByArr[i]) {
-					case 'clicked_at':
+					case 'clickedAt':
 						queryBuilder
-							.addSelect([`DATE(redirection_logs.${grpByArr[i]}) AS ${grpByArr[i]} `])
-							.addGroupBy(`DATE(redirection_logs.${grpByArr[i]})`);
+							.addSelect([`DATE(logs.${grpByArr[i]}) AS ${grpByArr[i]} `])
+							.addGroupBy(`DATE(logs.${grpByArr[i]})`);
 
 						break;
 					default:
-						queryBuilder
-							.addSelect([`redirection_logs.${grpByArr[i]} AS ${grpByArr[i]} `])
-							.addGroupBy(`redirection_logs.${grpByArr[i]} `);
+						queryBuilder.addSelect([`logs.${grpByArr[i]} AS ${grpByArr[i]} `]).addGroupBy(`logs.${grpByArr[i]} `);
 				}
 			}
 		}
