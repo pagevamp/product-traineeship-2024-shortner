@@ -5,6 +5,7 @@ export const successMessage = {
 	verificationEmailSent: 'Verification Email has been sent successfully',
 	shortUrlCreated: 'Short URL created successfully',
 	loginSuccess: 'Login success',
+	urlExpiryUpdated: 'Expiry date of short code has been updated',
 };
 
 export const errorMessage = {
@@ -23,4 +24,6 @@ export const errorMessage = {
 	urlCreationFailure: 'Short URL not created',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
 	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
+	urlNotFound: 'URL for given short code not found',
+	urlNotUpdated: 'The expired date of URL could not be updated',
 };

@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { errorMessage } from '@/common/messages';
+import { errorMessage, successMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository, TypeORMError } from 'typeorm';
@@ -83,6 +83,21 @@ export class ShortUrlsService {
 		return {
 			status: HttpStatus.OK,
 			data: await this.template.redirectionHTMLTemplate(url, user.name),
+		};
+	}
+
+	async updateExpiryDateByCode(code: string, newExpiryDate: Date): Promise<Partial<ShortUrl>> {
+		const urlData = await this.findByCode(code);
+		if (!urlData) {
+			throw new Error(errorMessage.urlNotFound);
+		}
+		const updatedResult = (await this.shortUrlRepository.update({ short_code: code }, { expires_at: newExpiryDate }))
+			.affected;
+		if (!updatedResult) throw new TypeORMError(errorMessage.urlNotUpdated);
+		this.logger.log(`${successMessage.urlExpiryUpdated} => ${code}`);
+		return {
+			short_code: urlData.short_code,
+			expires_at: newExpiryDate,
 		};
 	}
 }

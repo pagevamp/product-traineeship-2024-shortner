@@ -5,6 +5,7 @@ import {
 	HttpCode,
 	HttpStatus,
 	Param,
+	Patch,
 	Post,
 	Query,
 	Req,
@@ -15,13 +16,14 @@ import {
 } from '@nestjs/common';
 import { ShortUrlsService } from '@/short-urls/short-urls.service';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { SuccessResponse } from '@/common/response.interface';
+import { GetMethodResponse, SuccessResponse } from '@/common/response.interface';
 import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
 import { Request, Response } from 'express';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
+import { UpdateShortUrlDto } from '@/short-urls/dto/update-short-url.dto';
 
 @UseGuards(AuthGuard)
 @Controller()
@@ -55,5 +57,15 @@ export class ShortUrlsController {
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
 		res.setHeader('Content-Type', 'text/html');
 		res.status(template.status).send(template.data);
+	}
+
+	@Patch('urls')
+	async updateURLexpiry(
+		@Query('shortCode') shortCode: string,
+		@Body() body: UpdateShortUrlDto,
+	): Promise<GetMethodResponse> {
+		const newExpiryDate = body.expiryDate;
+		const updatedData = await this.shortUrlsService.updateExpiryDateByCode(shortCode, newExpiryDate);
+		return { status: HttpStatus.OK, message: successMessage.urlExpiryUpdated, data: updatedData };
 	}
 }
