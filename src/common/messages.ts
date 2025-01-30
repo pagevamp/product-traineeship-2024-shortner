@@ -5,6 +5,8 @@ export const successMessage = {
 	verificationEmailSent: 'Verification Email has been sent successfully',
 	shortUrlCreated: 'Short URL created successfully',
 	loginSuccess: 'Login success',
+	userUpdateSuccess: 'User details updated successfully',
+	userPasswordUpdateSuccess: 'Password updated successfully',
 };
 
 export const errorMessage = {
@@ -23,4 +25,8 @@ export const errorMessage = {
 	urlCreationFailure: 'Short URL not created',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
 	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
+	noUpdateProvided: 'Noting to update',
+	invalidCurrentPassword: 'Invalid current password',
+	unauthorized: 'Not authorized to make this request',
+	samePasswords: 'New password be same as current password',
 };

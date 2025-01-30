@@ -1,10 +1,26 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+	Controller,
+	Post,
+	Body,
+	HttpCode,
+	HttpStatus,
+	Patch,
+	UseGuards,
+	Param,
+	Req,
+	ForbiddenException,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { UsersService } from '@/users/users.service';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { VerifyUserDto } from '@/users/dto/verify-user.dto';
 import { SuccessResponse } from '@/common/response.interface';
 import { SendVerificationDto } from '@/users/dto/send-verification.dto';
-import { successMessage } from '@/common/messages';
+import { errorMessage, successMessage } from '@/common/messages';
+import { AuthGuard } from '@/auth/guard/auth.guard';
+import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { User } from '@/users/entities/user.entity';
+import { UpdatePasswordDto } from '@/users/dto/update-password.dto';
 
 @Controller('users')
 export class UsersController {
@@ -36,6 +52,42 @@ export class UsersController {
 		return {
 			status: HttpStatus.OK,
 			message: successMessage.userVerified,
+		};
+	}
+
+	@Patch(':id/profile')
+	@UseGuards(AuthGuard)
+	async updateProfile(
+		@Param('id') id: string,
+		@Body() updateUserDto: UpdateUserDto,
+		@Req() req: Request,
+	): Promise<SuccessResponse> {
+		const user = req.user as User;
+		if (user.id !== id) {
+			throw new ForbiddenException(errorMessage.unauthorized);
+		}
+		await this.usersService.updateProfile(id, updateUserDto);
+		return {
+			status: HttpStatus.OK,
+			message: successMessage.userUpdateSuccess,
+		};
+	}
+
+	@Patch(':id/password')
+	@UseGuards(AuthGuard)
+	async updatePassword(
+		@Param('id') id: string,
+		@Body() updatePasswordDto: UpdatePasswordDto,
+		@Req() req: Request,
+	): Promise<SuccessResponse> {
+		const user = req.user as User;
+		if (user.id !== id) {
+			throw new ForbiddenException(errorMessage.unauthorized);
+		}
+		await this.usersService.updatePassword(id, updatePasswordDto);
+		return {
+			status: HttpStatus.OK,
+			message: successMessage.userPasswordUpdateSuccess,
 		};
 	}
 }
