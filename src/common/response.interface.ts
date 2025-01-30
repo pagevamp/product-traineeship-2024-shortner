@@ -12,7 +12,6 @@ export type TokenResponse = {
 } & SuccessResponse;
 
 export type TemplateResponse = {
-	status: number;
+	statusCode: number;
 	data: string;
 };
-

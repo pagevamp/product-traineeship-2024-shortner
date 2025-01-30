@@ -66,23 +66,24 @@ export class ShortUrlsService {
 			withDeleted: true,
 			relations: ['user'],
 		});
+		const templateData = {
+			statusCode: 200,
+			data: '',
+		};
 		if (!urlData) {
-			return {
-				status: HttpStatus.NOT_FOUND,
-				data: await this.template.pageNotFoundTemp(),
-			};
+			templateData.statusCode = HttpStatus.NOT_FOUND;
+			templateData.data = await this.template.pageNotFoundTemp();
+			return templateData;
 		}
 		const { original_url, user, expires_at } = urlData;
 		if (new Date() > expires_at) {
-			return {
-				status: HttpStatus.OK,
-				data: await this.template.expiredTemplate(shortURL, user.name),
-			};
+			templateData.statusCode = HttpStatus.OK;
+			templateData.data = await this.template.expiredTemplate(shortURL, user.name);
+			return templateData;
 		}
 		const url = original_url.includes('https') ? original_url : `https://${original_url}`;
-		return {
-			status: HttpStatus.OK,
-			data: await this.template.redirectionHTMLTemplate(url, user.name),
-		};
+		templateData.statusCode = HttpStatus.OK;
+		templateData.data = await this.template.redirectionHTMLTemplate(url, user.name);
+		return templateData;
 	}
 }
