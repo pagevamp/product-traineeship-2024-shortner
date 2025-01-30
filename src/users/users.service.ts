@@ -45,6 +45,14 @@ export class UsersService {
 		return user;
 	}
 
+	async findById(id: string): Promise<User> {
+		const user = await this.userRepository.findOneBy({ id });
+		if (!user) {
+			throw new NotFoundException(errorMessage.userNotFound);
+		}
+		return user;
+	}
+
 	async sendEmailVerification({ email }: SendVerificationDto): Promise<void> {
 		const user = await this.findByEmail(email);
 		if (user.verified_at) {
