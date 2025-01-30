@@ -1,7 +1,13 @@
 import { Transform } from 'class-transformer';
-import { IsDate, IsOptional, IsString, MaxDate, Validate } from 'class-validator';
+import { IsDate, IsEnum, IsOptional, IsString, MaxDate, Validate } from 'class-validator';
 import { FilterDate } from '@/url-analytics/validator/filter-date.validator';
 
+enum GroupByAndSortBY {
+	operating_system = 'operating_system',
+	device = 'device',
+	browser = 'browser',
+	clicked_at = 'clicked_at',
+}
 export class AnalyticsQueryDto {
 	@IsDate()
 	@IsOptional()
@@ -31,7 +37,7 @@ export class AnalyticsQueryDto {
 	@IsOptional()
 	country: string;
 
-	@IsString()
+	@IsEnum(GroupByAndSortBY)
 	@IsOptional()
 	groupBy: string;
 
@@ -50,7 +56,7 @@ export class AnalyticsQueryDto {
 	@IsOptional()
 	limit?: number;
 
-	@IsString()
+	@IsEnum(GroupByAndSortBY)
 	@IsOptional()
 	sortBy?: string;
 
