@@ -47,7 +47,7 @@ export class ShortUrlsController {
 	}
 
 	@Avoid()
-	@Get(':shortCode')
+	@Get('s/:shortCode')
 	@Version(VERSION_NEUTRAL)
 	async redirect(@Param('shortCode') shortCode: string, @Res() res: Response, @Req() req: Request): Promise<void> {
 		if (req.params.shortCode === 'favicon.ico') res.status(204);
