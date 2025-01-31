@@ -16,5 +16,5 @@ export const urlRateLimiter = {
 export const testLimit = {
 	max: 3,
 	windowMs: 15 * 60 * 1000,
-	isGlobal: true,
+	// isGlobal: true,
 };
