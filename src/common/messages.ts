@@ -28,5 +28,5 @@ export const errorMessage = {
 	noUpdateProvided: 'Noting to update',
 	invalidCurrentPassword: 'Invalid current password',
 	unauthorized: 'Not authorized to make this request',
-	samePasswords: 'New password be same as current password',
+	samePasswords: 'New password cannot be same as current password',
 };
