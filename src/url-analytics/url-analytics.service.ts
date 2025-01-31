@@ -106,7 +106,7 @@ export class UrlAnalyticsService {
 
 			for (let i = 0; i < grpByArr.length; i++) {
 				switch (grpByArr[i]) {
-					case 'clickedAt':
+					case 'clicked_at':
 						queryBuilder
 							.addSelect([`DATE(logs.${grpByArr[i]}) AS ${grpByArr[i]} `])
 							.addGroupBy(`DATE(logs.${grpByArr[i]})`);
@@ -116,8 +116,9 @@ export class UrlAnalyticsService {
 						queryBuilder.addSelect([`logs.${grpByArr[i]} AS ${grpByArr[i]} `]).addGroupBy(`logs.${grpByArr[i]} `);
 				}
 			}
+		} else {
+			queryBuilder.orderBy(`logs.${sortBy}`, order);
 		}
-		queryBuilder.orderBy(`logs.${sortBy}`, order);
 		const skip = (page - 1) * limit;
 		queryBuilder.skip(skip).limit(limit);
 
