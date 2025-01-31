@@ -12,7 +12,7 @@ async function bootstrap(): Promise<void> {
 	const port = env.APP_PORT;
 	try {
 		const app = await NestFactory.create<NestExpressApplication>(AppModule);
-		app.set('trust proxy', true);
+		app.set('trust proxy', 3);
 		app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 		app.useGlobalPipes(new ValidationPipe());
 		await redisClient.connect();
