@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UrlAnalytics } from '@/url-analytics/entities/url-analytics.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateUrlAnalyticsDto } from '@/url-analytics/dto/create-analytics.dto';
 import { lookup } from 'geoip-country';
 import { UAParser } from 'ua-parser-js';
@@ -72,23 +72,23 @@ export class UrlAnalyticsService {
 			});
 		}
 		if (device) {
-			const deviceArr: string[] = device.includes(',') ? device.split(',') : [device];
+			const deviceArr: string[] = await this.parseQuerytoArray(device);
 			queryBuilder.andWhere('logs.device IN (:...deviceArr)', { deviceArr });
 		}
 		if (browser) {
-			const browserArr: string[] = browser.includes(',') ? browser.split(',') : [browser];
+			const browserArr: string[] = await this.parseQuerytoArray(browser);
 			queryBuilder.andWhere('logs.browser IN (:...browserArr)', { browserArr });
 		}
 		if (os) {
-			const osArr: string[] = os.includes(',') ? os.split(',') : [os];
+			const osArr: string[] = await this.parseQuerytoArray(os);
 			queryBuilder.andWhere('logs.operating_system IN (:...osArr)', { osArr });
 		}
 		if (country) {
-			const countryArr: string[] = country.includes(',') ? country.split(',') : [country];
+			const countryArr: string[] = await this.parseQuerytoArray(country);
 			queryBuilder.andWhere('logs.country IN (:...countryArr)', { countryArr });
 		}
 		if (urlId) {
-			const urlIdArr: string[] = urlId.includes(',') ? urlId.split(',') : [urlId];
+			const urlIdArr: string[] = await this.parseQuerytoArray(urlId);
 			queryBuilder.andWhere('logs.short_url_id IN (:...urlIdArr)', { urlIdArr });
 		}
 		if (clickedAt) {
@@ -101,21 +101,8 @@ export class UrlAnalyticsService {
 		}
 
 		if (groupBy) {
-			const grpByArr = groupBy.includes(',') ? groupBy.split(',') : [groupBy];
-			queryBuilder.select(`COUNT(logs.id) AS numberOfHits`);
-
-			for (let i = 0; i < grpByArr.length; i++) {
-				switch (grpByArr[i]) {
-					case 'clicked_at':
-						queryBuilder
-							.addSelect([`DATE(logs.${grpByArr[i]}) AS ${grpByArr[i]} `])
-							.addGroupBy(`DATE(logs.${grpByArr[i]})`);
-
-						break;
-					default:
-						queryBuilder.addSelect([`logs.${grpByArr[i]} AS ${grpByArr[i]} `]).addGroupBy(`logs.${grpByArr[i]} `);
-				}
-			}
+			const grpByArr = await this.parseQuerytoArray(groupBy);
+			await this.filterQueryByGroupBy(queryBuilder, grpByArr);
 		} else {
 			queryBuilder.orderBy(`logs.${sortBy}`, order);
 		}
@@ -123,6 +110,7 @@ export class UrlAnalyticsService {
 		queryBuilder.skip(skip).limit(limit);
 
 		const reports = await queryBuilder.getRawMany();
+		console.log(reports);
 		this.logger.log(successMessage.fetchedAnalytics);
 		return reports;
 	}
@@ -143,5 +131,28 @@ export class UrlAnalyticsService {
 	private async getCountryFromIP(ip: string): Promise<string | undefined> {
 		const location = lookup(ip);
 		return location?.country;
+	}
+
+	private async parseQuerytoArray(queryKey: string): Promise<string[]> {
+		const queryKeyArray: string[] = queryKey.includes(',') ? queryKey.split(',') : [queryKey];
+		return queryKeyArray;
+	}
+
+	private async filterQueryByGroupBy(
+		queryBuilder: SelectQueryBuilder<UrlAnalytics>,
+		grpByArr: string[],
+	): Promise<void> {
+		console.log(grpByArr);
+		queryBuilder.select(`COUNT(logs.id) AS numberOfHits`);
+		for (let i = 0; i < grpByArr.length; i++) {
+			switch (grpByArr[i]) {
+				case 'clicked_at':
+					queryBuilder.addSelect(['DATE(logs.clicked_at) AS "clickedAt"']).addGroupBy('DATE(logs.clicked_at)');
+					break;
+				default:
+					queryBuilder.addSelect([`logs.${grpByArr[i]} AS ${grpByArr[i]} `]).addGroupBy(`logs.${grpByArr[i]} `);
+			}
+		}
+		return;
 	}
 }

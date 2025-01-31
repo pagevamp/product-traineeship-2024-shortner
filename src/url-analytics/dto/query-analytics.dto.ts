@@ -37,7 +37,7 @@ export class AnalyticsQueryDto {
 	@IsOptional()
 	country: string;
 
-	@IsEnum(GroupByAndSortBY)
+	@IsString()
 	@IsOptional()
 	groupBy: string;
 
