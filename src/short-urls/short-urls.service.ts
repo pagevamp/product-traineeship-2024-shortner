@@ -76,17 +76,17 @@ export class ShortUrlsService {
 				data: await this.template.pageNotFoundTemp(),
 			};
 		}
-		const { original_url, user, expires_at } = urlData;
+		const { original_url, expires_at } = urlData;
 		if (new Date() > expires_at) {
 			return {
 				status: HttpStatus.OK,
-				data: await this.template.expiredTemplate(shortURL, user.name),
+				data: await this.template.expiredTemplate(shortURL),
 			};
 		}
 		const url = original_url.includes('https') ? original_url : `https://${original_url}`;
 		return {
 			status: HttpStatus.OK,
-			data: await this.template.redirectionHTMLTemplate(url, user.name),
+			data: await this.template.redirectionHTMLTemplate(url),
 		};
 	}
 

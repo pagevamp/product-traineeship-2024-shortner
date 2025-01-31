@@ -1,5 +1,5 @@
 export class HTMLTemplateForRedirection {
-	async redirectionHTMLTemplate(url: string, name: string): Promise<string> {
+	async redirectionHTMLTemplate(url: string): Promise<string> {
 		return `
 		<html lang='en'>
 		<head>
@@ -14,7 +14,7 @@ export class HTMLTemplateForRedirection {
 	
 		<body>
 			<div>
-				<h1>Hey ${name} !! Are you sure you want to redirect?</h1>
+				<h1> Are you sure you want to redirect?</h1>
 				<a href='${url}'><button id='disable-button' disabled>Redirect to Original Site</button></a>
 			</div>
 	
@@ -22,7 +22,7 @@ export class HTMLTemplateForRedirection {
 	</html>`;
 	}
 
-	async expiredTemplate(url: string, name: string): Promise<string> {
+	async expiredTemplate(url: string): Promise<string> {
 		return `
 		<html lang='en'>
 		<head>
@@ -33,8 +33,7 @@ export class HTMLTemplateForRedirection {
 	
 		<body>
 			<div>
-				<h1>Hey ${name}  </h1><br />
-				<h1>The short url '${url}' is expired !</h1>
+			<h1>The short url '${url}' is expired !</h1>
 			</div>
 	
 		</body>
