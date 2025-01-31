@@ -67,7 +67,7 @@ export class ShortUrlsService {
 			relations: ['user'],
 		});
 		const templateData = {
-			statusCode: 200,
+			statusCode: HttpStatus.OK,
 			data: '',
 		};
 		if (!urlData) {
@@ -77,12 +77,10 @@ export class ShortUrlsService {
 		}
 		const { original_url, user, expires_at } = urlData;
 		if (new Date() > expires_at) {
-			templateData.statusCode = HttpStatus.OK;
 			templateData.data = await this.template.expiredTemplate(shortURL, user.name);
 			return templateData;
 		}
 		const url = original_url.includes('https') ? original_url : `https://${original_url}`;
-		templateData.statusCode = HttpStatus.OK;
 		templateData.data = await this.template.redirectionHTMLTemplate(url, user.name);
 		return templateData;
 	}
