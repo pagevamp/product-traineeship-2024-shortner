@@ -1,5 +1,5 @@
 import { ConfigModule } from '@nestjs/config';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
@@ -13,6 +13,9 @@ import { MailerModule } from '@/mailer/mailer.module';
 import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 import { LoggerModule } from '@/logger/logger.module';
 import { HealthModule } from '@/health/health.module';
+import { RateLimitMiddlewareFactory } from '@/middleware/rate-limit.middleware';
+import { testLimit } from '@/config/rateLimit.config';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
@@ -34,4 +37,8 @@ import { HealthModule } from '@/health/health.module';
 		},
 	],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+	configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(RateLimitMiddlewareFactory.create(testLimit)).forRoutes('/');
+	}
+}

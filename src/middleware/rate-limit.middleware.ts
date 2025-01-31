@@ -8,6 +8,7 @@ import { redisClient } from '@/config/redis.config';
 interface RateLimitConfig {
 	windowMs: number;
 	max: number;
+	isGlobal?: boolean;
 }
 
 @Injectable()
@@ -25,6 +26,7 @@ export class RateLimitMiddlewareFactory {
 				},
 				standardHeaders: true,
 				legacyHeaders: false,
+				...(config.isGlobal ? { keyGenerator: () => `global-limit` } : {}),
 				validate: { xForwardedForHeader: false },
 				store: new RedisStore({
 					sendCommand: (...args: string[]) => redisClient.sendCommand(args),
@@ -32,6 +34,7 @@ export class RateLimitMiddlewareFactory {
 			});
 
 			use(req: Request, res: Response, next: NextFunction) {
+				console.log(req.ip);
 				this.limiter(req, res, next);
 			}
 		}
