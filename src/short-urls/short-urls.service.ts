@@ -1,14 +1,16 @@
+import { HTMLTemplateForRedirection } from '@/template/redirect.template';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { errorMessage } from '@/common/messages';
+import { errorMessage, successMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository, TypeORMError } from 'typeorm';
+import { LessThan, MoreThan, Repository, TypeORMError, UpdateResult } from 'typeorm';
 import { generateUrlCode } from '@/short-urls/util/generate-url-code';
+import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
-import { TemplateResponse } from '@/common/response.interface';
-import { HTMLTemplateForRedirection } from '@/template/redirect.template';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class ShortUrlsService {
@@ -16,6 +18,7 @@ export class ShortUrlsService {
 		private readonly logger: LoggerService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
+		@InjectQueue('notifyExpiredUrl') private readonly queueService: Queue,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
 	async createShortUrl(
@@ -60,6 +63,7 @@ export class ShortUrlsService {
 		}
 		return code;
 	}
+
 	async redirectToOriginal(shortCode: string, shortURL: string): Promise<TemplateResponse> {
 		const urlData = await this.shortUrlRepository.findOne({
 			where: { short_code: shortCode },
@@ -84,5 +88,39 @@ export class ShortUrlsService {
 			status: HttpStatus.OK,
 			data: await this.template.redirectionHTMLTemplate(url, user.name),
 		};
+	}
+
+	async checkURLExpiry(): Promise<void> {
+		const currentDate = new Date();
+		const expiredUrls = await this.shortUrlRepository.find({
+			where: { expires_at: LessThan(currentDate) },
+			relations: ['user'],
+		});
+		if (expiredUrls.length == 0) {
+			this.logger.log(successMessage.noExpiredUrls);
+		}
+		const resolveBulkQueue = [];
+		for (const url of expiredUrls) {
+			resolveBulkQueue.push(
+				await this.queueService.add(
+					'notifyExpiredUrl',
+					{
+						id: url.id,
+						email: url.user.email,
+						shortCode: url.short_code,
+						name: url.user.name,
+					},
+					{ removeOnComplete: true, delay: 2000, attempts: 5, jobId: `notifyExpiredUrl-${url.id}` },
+				),
+			);
+		}
+
+		await Promise.all(resolveBulkQueue);
+	}
+
+	async deleteUrls(id: string): Promise<UpdateResult> {
+		const deletionResult = await this.shortUrlRepository.softDelete({ id });
+		this.logger.log(`${successMessage.deleteUrl} ${id}`);
+		return deletionResult;
 	}
 }

@@ -15,4 +15,3 @@ export type TemplateResponse = {
 	status: number;
 	data: string;
 };
-
