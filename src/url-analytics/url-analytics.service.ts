@@ -110,7 +110,6 @@ export class UrlAnalyticsService {
 		queryBuilder.skip(skip).limit(limit);
 
 		const reports = await queryBuilder.getRawMany();
-		console.log(reports);
 		this.logger.log(successMessage.fetchedAnalytics);
 		return reports;
 	}
@@ -134,7 +133,7 @@ export class UrlAnalyticsService {
 	}
 
 	private async parseQuerytoArray(queryKey: string): Promise<string[]> {
-		const queryKeyArray: string[] = queryKey.includes(',') ? queryKey.split(',') : [queryKey];
+		const queryKeyArray: string[] = queryKey.split(',');
 		return queryKeyArray;
 	}
 
@@ -142,15 +141,14 @@ export class UrlAnalyticsService {
 		queryBuilder: SelectQueryBuilder<UrlAnalytics>,
 		grpByArr: string[],
 	): Promise<void> {
-		console.log(grpByArr);
 		queryBuilder.select(`COUNT(logs.id) AS numberOfHits`);
-		for (let i = 0; i < grpByArr.length; i++) {
-			switch (grpByArr[i]) {
+		for (const field of grpByArr) {
+			switch (field) {
 				case 'clicked_at':
 					queryBuilder.addSelect(['DATE(logs.clicked_at) AS "clickedAt"']).addGroupBy('DATE(logs.clicked_at)');
 					break;
 				default:
-					queryBuilder.addSelect([`logs.${grpByArr[i]} AS ${grpByArr[i]} `]).addGroupBy(`logs.${grpByArr[i]} `);
+					queryBuilder.addSelect([`logs.${field} AS ${field} `]).addGroupBy(`logs.${field} `);
 			}
 		}
 		return;
