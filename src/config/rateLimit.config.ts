@@ -11,4 +11,5 @@ export const otpVerificationRateLimiter = {
 export const urlRateLimiter = {
 	max: 5,
 	windowMs: 1 * 60,
+	isGlobal: true,
 };
