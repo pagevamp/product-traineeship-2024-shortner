@@ -56,7 +56,7 @@ export class ShortUrlsController {
 		const shortURL = `${req.headers.host}/${shortCode}`;
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
 		res.setHeader('Content-Type', 'text/html');
-		res.status(template.status).send(template.data);
+		res.status(template.statusCode).send(template.data);
 	}
 
 	@Delete('urls')
