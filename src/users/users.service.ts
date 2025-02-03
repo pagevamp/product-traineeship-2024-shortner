@@ -46,15 +46,24 @@ export class UsersService {
 	}
 
 	async findByEmail(email: string): Promise<User> {
-		const user = await this.userRepository.findOneBy({ email });
-		if (!user) {
-			throw new NotFoundException(errorMessage.userNotFound);
-		}
-		return user;
+		return this.findUser({ email });
 	}
 
 	async findById(id: string): Promise<User> {
-		const user = await this.userRepository.findOneBy({ id });
+		return this.findUser({ id });
+	}
+
+	private async findUser(where: Partial<Pick<User, 'id' | 'email'>>): Promise<User> {
+		const user = await this.userRepository.findOne({
+			where,
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				created_at: true,
+				updated_at: true,
+			},
+		});
 		if (!user) {
 			throw new NotFoundException(errorMessage.userNotFound);
 		}

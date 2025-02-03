@@ -9,6 +9,7 @@ import {
 	Param,
 	Req,
 	ForbiddenException,
+	Get,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { UsersService } from '@/users/users.service';
@@ -71,6 +72,17 @@ export class UsersController {
 			status: HttpStatus.OK,
 			message: successMessage.userUpdateSuccess,
 		};
+	}
+
+	@Get(':id/profile')
+	@UseGuards(AuthGuard)
+	@HttpCode(HttpStatus.OK)
+	async getUserDetails(@Param('id') id: string, @Req() req: Request): Promise<User> {
+		const user = req.user as User;
+		if (user.id !== id) {
+			throw new ForbiddenException(errorMessage.unauthorized);
+		}
+		return await this.usersService.findById(user.id);
 	}
 
 	@Patch(':id/password')
