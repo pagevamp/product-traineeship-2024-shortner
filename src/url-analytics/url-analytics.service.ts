@@ -8,6 +8,7 @@ import { UAParser } from 'ua-parser-js';
 import { AnalyticsQueryDto } from '@/url-analytics/dto/query-analytics.dto';
 import { successMessage } from '@/common/messages';
 import { LoggerService } from '@/logger/logger.service';
+import { QueryFilterInterface } from '@/common/response.interface';
 
 @Injectable()
 export class UrlAnalyticsService {
@@ -34,7 +35,7 @@ export class UrlAnalyticsService {
 		await this.analyticsRepo.insert(analytics);
 	}
 
-	async getUserSpecificAnalysis(userId: string, query: AnalyticsQueryDto): Promise<UrlAnalytics[]> {
+	async getUserSpecificAnalysis(userId: string, query: AnalyticsQueryDto): Promise<QueryFilterInterface> {
 		const {
 			startDate,
 			endDate,
@@ -50,6 +51,7 @@ export class UrlAnalyticsService {
 			sortBy = 'clicked_at',
 			order = 'DESC',
 		} = query;
+		let numberOfHits = 0;
 		const queryBuilder = this.analyticsRepo
 			.createQueryBuilder('logs')
 			.leftJoin('logs.short_url', 'shortUrl')
@@ -105,13 +107,14 @@ export class UrlAnalyticsService {
 			await this.filterQueryByGroupBy(queryBuilder, grpByArr);
 		} else {
 			queryBuilder.orderBy(`logs.${sortBy}`, order);
+			numberOfHits = await queryBuilder.getCount();
 		}
 		const skip = (page - 1) * limit;
 		queryBuilder.skip(skip).limit(limit);
 
 		const reports = await queryBuilder.getRawMany();
 		this.logger.log(successMessage.fetchedAnalytics);
-		return reports;
+		return { reports, ...(groupBy ? {} : { numberOfHits }) };
 	}
 
 	private async parseUserAgent(
