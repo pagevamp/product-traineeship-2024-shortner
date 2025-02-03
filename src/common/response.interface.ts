@@ -4,7 +4,7 @@ export interface SuccessResponse {
 }
 
 export interface GetMethodResponse extends SuccessResponse {
-	data: object[];
+	data: object | object[];
 }
 
 export type TokenResponse = {
