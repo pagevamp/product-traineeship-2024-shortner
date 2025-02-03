@@ -25,4 +25,5 @@ export const errorMessage = {
 	urlCreationFailure: 'Short URL not created',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
 	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
+	queryDateValidation: 'Provided query endDate must be greater than startDate',
 };

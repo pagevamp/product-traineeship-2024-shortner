@@ -1,5 +1,6 @@
 import { ValidatorConstraint, ValidationArguments, ValidatorConstraintInterface } from 'class-validator';
 import { AnalyticsQueryDto } from '@/url-analytics/dto/query-analytics.dto';
+import { errorMessage } from '@/common/messages';
 
 @ValidatorConstraint({ name: 'FilterDate', async: false })
 export class FilterDate implements ValidatorConstraintInterface {
@@ -10,6 +11,6 @@ export class FilterDate implements ValidatorConstraintInterface {
 	}
 
 	defaultMessage(): string {
-		return `endDate must be greater than startDate`;
+		return errorMessage.queryDateValidation;
 	}
 }
