@@ -31,6 +31,10 @@ export class HealthService {
 		return this.memory.checkRSS('memory_rss', 150 * 1024 * 1024);
 	}
 
+	async checkDiskStorage(): Promise<HealthIndicatorResult> {
+		return this.disk.checkStorage('storage', { thresholdPercent: 0.8, path: '/' });
+	}
+
 	async checkRedis(): Promise<HealthIndicatorResult> {
 		try {
 			const pingResult = await redisClient.ping();
@@ -48,6 +52,7 @@ export class HealthService {
 			() => this.checkDatabase(),
 			() => this.checkMemoryHeap(),
 			() => this.checkMemoryRSS(),
+			() => this.checkDiskStorage(),
 			() => this.checkRedis(),
 		]);
 	}

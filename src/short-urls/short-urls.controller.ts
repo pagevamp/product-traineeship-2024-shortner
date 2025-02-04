@@ -1,26 +1,28 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
-	Param,
 	Post,
+	Param,
 	Query,
 	Req,
 	Res,
-	UseGuards,
 	Version,
 	VERSION_NEUTRAL,
+	UseGuards,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ShortUrlsService } from '@/short-urls/short-urls.service';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
 import { SuccessResponse } from '@/common/response.interface';
 import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
-import { Request, Response } from 'express';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
+import { UpdateResult } from 'typeorm';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 
 @UseGuards(AuthGuard)
@@ -47,7 +49,7 @@ export class ShortUrlsController {
 	}
 
 	@Avoid()
-	@Get(':shortCode')
+	@Get('s/:shortCode')
 	@Version(VERSION_NEUTRAL)
 	async redirect(@Param('shortCode') shortCode: string, @Res() res: Response, @Req() req: Request): Promise<void> {
 		if (req.params.shortCode === 'favicon.ico') res.status(204);
@@ -59,5 +61,10 @@ export class ShortUrlsController {
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL, analyticsPayload);
 		res.setHeader('Content-Type', 'text/html');
 		res.status(template.status).send(template.data);
+	}
+
+	@Delete('urls')
+	async delete(@Param('id') id: string): Promise<UpdateResult> {
+		return await this.shortUrlsService.deleteUrls(id);
 	}
 }
