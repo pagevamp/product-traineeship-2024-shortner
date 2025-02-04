@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { DataSource } from 'typeorm';
+import { promises as fs } from 'fs';
+import path from 'path';
 import { User } from '@/users/entities/user.entity';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { UrlAnalytics } from '@/url-analytics/entities/url-analytics.entity';
@@ -11,69 +13,47 @@ export async function seedDatabase(dataSource: DataSource) {
 	const shortenedUrlRepository = dataSource.getRepository(ShortUrl);
 	const redirectionLogRepository = dataSource.getRepository(UrlAnalytics);
 
-	const users = [
+	const seedDataPath = path.join(__dirname, 'seed-data.json');
+	const seedData = JSON.parse(await fs.readFile(seedDataPath, 'utf-8'));
+
+	const users = seedData.users.map((user: User) =>
 		userRepository.create({
-			email: 'ram@example.com',
-			password_hash: 'test@123',
-			name: 'Ram',
+			...user,
 			verified_at: new Date(),
 		}),
-		userRepository.create({
-			email: 'sita@example.com',
-			password_hash: 'test@456',
-			name: 'Sita',
-			verified_at: new Date(),
-		}),
-	];
+	);
 	await userRepository.save(users);
 
-	const shortenedUrls = [
+	const shortenedUrls = seedData.shortenedUrls.map((url: any) =>
 		shortenedUrlRepository.create({
-			user_id: users[0].id,
-			original_url: 'https://www.iban.com/country-codes',
-			short_code: 'AbCd12',
-			expires_at: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+			user_id: users[url.user_id].id,
+			original_url: url.original_url,
+			short_code: url.short_code,
+			expires_at: new Date(Date.now() + url.expires_at * 24 * 60 * 60 * 1000),
 		}),
-		shortenedUrlRepository.create({
-			user_id: users[0].id,
-			original_url: 'https://neon.tech/postgresql/postgresql-tutorial/postgresql-group-by',
-			short_code: 'EfGh34',
-			expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-		}),
-		shortenedUrlRepository.create({
-			user_id: users[1].id,
-			original_url: 'https://neon.tech/docs/data-types/array',
-			short_code: 'IjKl56',
-			expires_at: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
-		}),
-		shortenedUrlRepository.create({
-			user_id: users[1].id,
-			original_url: 'https://kb.objectrocket.com/postgresql/join-three-tables-in-postgresql-539',
-			short_code: 'MnOp78',
-			expires_at: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-		}),
-	];
+	);
 	await shortenedUrlRepository.save(shortenedUrls);
 
 	const redirectionLogs: any[] = [];
 	const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera'];
 	const devices = ['Desktop', 'Mobile', 'Tablet'];
 	const ips = ['192.168.0.1', '10.0.0.2', '172.16.0.3', '203.0.113.4', '8.8.8.8'];
-	const countries = ['Nepal', 'India', 'China', 'USA', 'Russia'];
-	const operatingSystems = ['Android', 'iOS', 'Windows', 'MacOs', 'Linux'];
+	const countries = ['NP', 'IN', 'CN', 'US', 'RU'];
+	const startDate = new Date('2025-01-01T00:00:00');
+	const endDate = new Date('2025-02-01T23:59:59');
 
-	shortenedUrls.forEach((shortenedUrl) => {
+	shortenedUrls.forEach((shortenedUrl: { id: any; user_id: any }) => {
 		for (let i = 0; i < 200; i++) {
+			const randomClickedAt = getRandomDate(startDate, endDate);
 			redirectionLogs.push(
 				redirectionLogRepository.create({
 					short_url_id: shortenedUrl.id,
 					user_id: shortenedUrl.user_id,
-					clicked_at: new Date(Date.now() - (i % 10) * 24 * 60 * 60 * 1000),
+					clicked_at: randomClickedAt,
 					ip_address: ips[i % ips.length],
-					user_agent: `Browser/${browsers[i % browsers.length]} OS/${operatingSystems[i % operatingSystems.length]} Device/${devices[i % devices.length]}`,
+					user_agent: `Browser/${browsers[i % browsers.length]} Device/${devices[i % devices.length]}`,
 					browser: browsers[i % browsers.length],
 					device: devices[i % devices.length],
-					operating_system: operatingSystems[i % operatingSystems.length],
 					country: countries[i % countries.length],
 				}),
 			);
@@ -81,6 +61,9 @@ export async function seedDatabase(dataSource: DataSource) {
 	});
 
 	await redirectionLogRepository.save(redirectionLogs);
-
 	console.log('Database seeded successfully.');
+}
+
+function getRandomDate(start: Date, end: Date): Date {
+	return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 }

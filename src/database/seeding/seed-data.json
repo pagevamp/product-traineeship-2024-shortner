@@ -1,0 +1,40 @@
+{
+	"users": [
+		{
+			"email": "ram@example.com",
+			"password_hash": "test@123",
+			"name": "Ram"
+		},
+		{
+			"email": "sita@example.com",
+			"password_hash": "test@456",
+			"name": "Sita"
+		}
+	],
+	"shortenedUrls": [
+		{
+			"user_index": 0,
+			"original_url": "https://www.iban.com/country-codes",
+			"short_code": "AbCd12",
+			"expires_in_days": 2
+		},
+		{
+			"user_index": 0,
+			"original_url": "https://neon.tech/postgresql/postgresql-tutorial/postgresql-group-by",
+			"short_code": "EfGh34",
+			"expires_in_days": 3
+		},
+		{
+			"user_index": 1,
+			"original_url": "https://neon.tech/docs/data-types/array",
+			"short_code": "IjKl56",
+			"expires_in_days": 4
+		},
+		{
+			"user_index": 1,
+			"original_url": "https://kb.objectrocket.com/postgresql/join-three-tables-in-postgresql-539",
+			"short_code": "MnOp78",
+			"expires_in_days": 5
+		}
+	]
+}
