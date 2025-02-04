@@ -141,9 +141,10 @@ export class ShortUrlsService {
 		await Promise.all(resolveBulkQueue);
 	}
 
-	async deleteUrls(id: string): Promise<UpdateResult> {
-		const deletionResult = await this.shortUrlRepository.softDelete({ id });
-		this.logger.log(`${successMessage.deleteUrl} ${id}`);
+	async deleteUrls(shortCode: string): Promise<UpdateResult> {
+		const deletionResult = await this.shortUrlRepository.softDelete({ short_code: shortCode });
+		if (!deletionResult.affected) throw new Error(errorMessage.urlNotDeleted);
+		this.logger.log(`${successMessage.deleteUrl} ${shortCode}`);
 		return deletionResult;
 	}
 }

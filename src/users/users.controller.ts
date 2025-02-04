@@ -93,10 +93,11 @@ export class UsersController {
 		@Req() req: Request,
 	): Promise<SuccessResponse> {
 		const user = req.user as User;
+		const email = user.email;
 		if (user.id !== id) {
 			throw new ForbiddenException(errorMessage.unauthorized);
 		}
-		await this.usersService.updatePassword(id, updatePasswordDto);
+		await this.usersService.updatePassword(email, updatePasswordDto);
 		return {
 			status: HttpStatus.OK,
 			message: successMessage.userPasswordUpdateSuccess,

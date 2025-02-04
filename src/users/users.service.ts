@@ -46,7 +46,13 @@ export class UsersService {
 	}
 
 	async findByEmail(email: string): Promise<User> {
-		return this.findUser({ email });
+		const user = await this.userRepository.findOne({
+			where: { email },
+		});
+		if (!user) {
+			throw new NotFoundException(errorMessage.userNotFound);
+		}
+		return user;
 	}
 
 	async findById(id: string): Promise<User> {
@@ -96,8 +102,8 @@ export class UsersService {
 		return { ...user, ...updates };
 	}
 
-	async updatePassword(id: string, { currentPassword, newPassword }: UpdatePasswordDto): Promise<void> {
-		const user = await this.findById(id);
+	async updatePassword(email: string, { currentPassword, newPassword }: UpdatePasswordDto): Promise<void> {
+		const user = await this.findByEmail(email);
 		const isPasswordValid = await compare(currentPassword, user.password_hash);
 		if (!isPasswordValid) {
 			throw new UnauthorizedException(errorMessage.invalidCurrentPassword);
@@ -108,7 +114,7 @@ export class UsersService {
 		}
 		const newPasswordHash = await hash(newPassword, env.SALT_ROUND);
 		await this.userRepository.update(user.id, { password_hash: newPasswordHash });
-		this.logger.log(`User ${id} password updated`);
+		this.logger.log(`User ${email} password updated`);
 	}
 
 	async sendEmailVerification({ email }: SendVerificationDto): Promise<void> {

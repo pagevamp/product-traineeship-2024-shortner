@@ -23,12 +23,11 @@ import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
-import { UpdateResult } from 'typeorm';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { UpdateShortUrlDto } from '@/short-urls/dto/update-short-url.dto';
 
 @UseGuards(AuthGuard)
-@Controller('urls')
+@Controller()
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
 	@Post('urls')
@@ -75,7 +74,11 @@ export class ShortUrlsController {
 		return { status: HttpStatus.OK, message: successMessage.urlExpiryUpdated, data: updatedData };
 	}
 	@Delete('urls')
-	async delete(@Param('id') id: string): Promise<UpdateResult> {
-		return await this.shortUrlsService.deleteUrls(id);
+	async delete(@Query('shortCode') shortCode: string): Promise<SuccessResponse> {
+		await this.shortUrlsService.deleteUrls(shortCode);
+		return {
+			status: HttpStatus.OK,
+			message: `${successMessage.deleteUrl} ${shortCode}`,
+		};
 	}
 }

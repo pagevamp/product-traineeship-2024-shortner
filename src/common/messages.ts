@@ -7,7 +7,7 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	urlExpiryUpdated: 'Expiry date of short code has been updated',
 	noExpiredUrls: 'No short urls are expired.',
-	deleteUrl: 'URL Deletion successful  with id',
+	deleteUrl: 'URL Deletion successful  with short code',
 	redirectionLogsSuccessful: 'Redirection logs created successfully',
 	fetchedAnalytics: 'Redirection logs for given user has been fetched',
 	userUpdateSuccess: 'User details updated successfully',
@@ -42,4 +42,5 @@ export const errorMessage = {
 	invalidCurrentPassword: 'Invalid current password',
 	unauthorized: 'Not authorized to make this request',
 	samePasswords: 'New password cannot be same as current password',
+	urlNotDeleted: 'URL could not be deleted',
 };
