@@ -10,6 +10,8 @@ export const successMessage = {
 	deleteUrl: 'URL Deletion successful  with id',
 	redirectionLogsSuccessful: 'Redirection logs created successfully',
 	fetchedAnalytics: 'Redirection logs for given user has been fetched',
+	userUpdateSuccess: 'User details updated successfully',
+	userPasswordUpdateSuccess: 'Password updated successfully',
 };
 
 export const errorMessage = {
@@ -35,4 +37,8 @@ export const errorMessage = {
 	jobRemoved: 'Removing job with id ->',
 	expiredEmailTempText: 'Your short code is expired , please generate a new one if you need',
 	queryDateValidation: 'Provided query endDate must be greater than startDate',
+	noUpdateProvided: 'Noting to update',
+	invalidCurrentPassword: 'Invalid current password',
+	unauthorized: 'Not authorized to make this request',
+	samePasswords: 'New password cannot be same as current password',
 };

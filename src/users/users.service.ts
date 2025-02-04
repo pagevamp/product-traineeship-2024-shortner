@@ -1,10 +1,16 @@
-import { BadRequestException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+	UnauthorizedException,
+	UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { env } from '@/config/env.config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/users/entities/user.entity';
 import { Repository, TypeORMError } from 'typeorm';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { errorMessage } from '@/common/messages';
 import { VerificationService } from '@/verification/verification.service';
 import { MailerService } from '@/mailer/mailer.service';
@@ -12,6 +18,8 @@ import { signupOtpMailTemplate } from '@/template/email.template';
 import { VerifyUserDto } from '@/users/dto/verify-user.dto';
 import { SendVerificationDto } from '@/users/dto/send-verification.dto';
 import { LoggerService } from '@/logger/logger.service';
+import { UpdateUserDto } from '@/users/dto/update-user.dto';
+import { UpdatePasswordDto } from '@/users/dto/update-password.dto';
 @Injectable()
 export class UsersService {
 	constructor(
@@ -38,11 +46,69 @@ export class UsersService {
 	}
 
 	async findByEmail(email: string): Promise<User> {
-		const user = await this.userRepository.findOneBy({ email });
+		return this.findUser({ email });
+	}
+
+	async findById(id: string): Promise<User> {
+		return this.findUser({ id });
+	}
+
+	private async findUser(where: Partial<Pick<User, 'id' | 'email'>>): Promise<User> {
+		const user = await this.userRepository.findOne({
+			where,
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				created_at: true,
+				updated_at: true,
+			},
+		});
 		if (!user) {
 			throw new NotFoundException(errorMessage.userNotFound);
 		}
 		return user;
+	}
+
+	async updateProfile(id: string, { name, email }: UpdateUserDto): Promise<User> {
+		const user = await this.findById(id);
+		const updates: Partial<User> = {};
+		if (name) {
+			updates.name = name;
+			this.logger.log(`User ${user.id} name updated to ${name}`);
+		}
+		if (email && email !== user.email) {
+			const emailExists = await this.userRepository.findOneBy({ email });
+			if (emailExists) {
+				throw new BadRequestException(errorMessage.userAlreadyExists);
+			}
+			updates.email = email;
+			updates.verified_at = null;
+			this.logger.log(`User ${user.id} email updated to ${email}`);
+		}
+		if (Object.keys(updates).length === 0) {
+			throw new BadRequestException(errorMessage.noUpdateProvided);
+		}
+		const update = await this.userRepository.update(user.id, { ...updates });
+		if (!update) {
+			throw new TypeORMError('failed to update user');
+		}
+		return { ...user, ...updates };
+	}
+
+	async updatePassword(id: string, { currentPassword, newPassword }: UpdatePasswordDto): Promise<void> {
+		const user = await this.findById(id);
+		const isPasswordValid = await compare(currentPassword, user.password_hash);
+		if (!isPasswordValid) {
+			throw new UnauthorizedException(errorMessage.invalidCurrentPassword);
+		}
+		const isNewPasswordSameAsCurrent = await compare(newPassword, user.password_hash);
+		if (isNewPasswordSameAsCurrent) {
+			throw new BadRequestException(errorMessage.samePasswords);
+		}
+		const newPasswordHash = await hash(newPassword, env.SALT_ROUND);
+		await this.userRepository.update(user.id, { password_hash: newPasswordHash });
+		this.logger.log(`User ${id} password updated`);
 	}
 
 	async sendEmailVerification({ email }: SendVerificationDto): Promise<void> {
