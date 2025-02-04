@@ -12,6 +12,7 @@ export const successMessage = {
 	fetchedAnalytics: 'Redirection logs for given user has been fetched',
 	userUpdateSuccess: 'User details updated successfully',
 	userPasswordUpdateSuccess: 'Password updated successfully',
+	expiryOtpDeleted: 'Expired OTP codes deleted successfully',
 };
 
 export const errorMessage = {
