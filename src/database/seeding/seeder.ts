@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { DataSource } from 'typeorm';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -8,7 +5,7 @@ import { User } from '@/users/entities/user.entity';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { UrlAnalytics } from '@/url-analytics/entities/url-analytics.entity';
 
-export async function seedDatabase(dataSource: DataSource) {
+export async function seedDatabase(dataSource: DataSource): Promise<void> {
 	const userRepository = dataSource.getRepository(User);
 	const shortenedUrlRepository = dataSource.getRepository(ShortUrl);
 	const redirectionLogRepository = dataSource.getRepository(UrlAnalytics);
@@ -24,6 +21,7 @@ export async function seedDatabase(dataSource: DataSource) {
 	);
 	await userRepository.save(users);
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const shortenedUrls = seedData.shortenedUrls.map((url: any) =>
 		shortenedUrlRepository.create({
 			user_id: users[url.user_id].id,
@@ -34,6 +32,7 @@ export async function seedDatabase(dataSource: DataSource) {
 	);
 	await shortenedUrlRepository.save(shortenedUrls);
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const redirectionLogs: any[] = [];
 	const browsers = ['Chrome', 'Firefox', 'Safari', 'Edge', 'Opera'];
 	const devices = ['Desktop', 'Mobile', 'Tablet'];
@@ -42,7 +41,7 @@ export async function seedDatabase(dataSource: DataSource) {
 	const startDate = new Date('2025-01-01T00:00:00');
 	const endDate = new Date('2025-02-01T23:59:59');
 
-	shortenedUrls.forEach((shortenedUrl: { id: any; user_id: any }) => {
+	shortenedUrls.forEach((shortenedUrl: { id: string; user_id: string }) => {
 		for (let i = 0; i < 200; i++) {
 			const randomClickedAt = getRandomDate(startDate, endDate);
 			redirectionLogs.push(
