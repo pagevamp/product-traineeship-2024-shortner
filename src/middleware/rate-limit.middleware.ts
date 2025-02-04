@@ -25,6 +25,7 @@ export class RateLimitMiddlewareFactory {
 					message: 'Too many requests from this IP, please try again later.',
 				},
 				standardHeaders: true,
+				...(config.isGlobal ? { keyGenerator: () => `global-limit` } : {}),
 				legacyHeaders: false,
 				...(config.isGlobal ? { keyGenerator: () => `global-limit` } : {}),
 				validate: { xForwardedForHeader: false },
