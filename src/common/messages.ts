@@ -7,6 +7,8 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	noExpiredUrls: 'No short urls are expired.',
 	deleteUrl: 'URL Deletion successful  with id',
+	redirectionLogsSuccessful: 'Redirection logs created successfully',
+	fetchedAnalytics: 'Redirection logs for given user has been fetched',
 };
 
 export const errorMessage = {
@@ -29,4 +31,5 @@ export const errorMessage = {
 	jobFailed: 'Job failed with id ->',
 	jobRemoved: 'Removing job with id ->',
 	expiredEmailTempText: 'Your short code is expired , please generate a new one if you need',
+	queryDateValidation: 'Provided query endDate must be greater than startDate',
 };

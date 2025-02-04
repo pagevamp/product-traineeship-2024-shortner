@@ -26,7 +26,7 @@ import { UpdateResult } from 'typeorm';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 
 @UseGuards(AuthGuard)
-@Controller()
+@Controller('urls')
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
 	@Post('urls')

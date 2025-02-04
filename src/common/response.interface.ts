@@ -1,3 +1,5 @@
+import { UrlAnalytics } from '@/url-analytics/entities/url-analytics.entity';
+
 export interface SuccessResponse {
 	status: number;
 	message: string;
@@ -14,4 +16,9 @@ export type TokenResponse = {
 export type TemplateResponse = {
 	status: number;
 	data: string;
+};
+
+export type QueryFilterInterface = {
+	reports: UrlAnalytics[];
+	numberOfHits?: number;
 };

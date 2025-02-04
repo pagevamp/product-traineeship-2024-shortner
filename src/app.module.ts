@@ -16,7 +16,7 @@ import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from '@/cron/cron.module';
 import { BullModule } from '@nestjs/bullmq';
-
+import { UrlAnalyticsModule } from '@/url-analytics/url-analytics.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
@@ -36,6 +36,7 @@ import { BullModule } from '@nestjs/bullmq';
 		LoggerModule,
 		CronModule,
 		HealthModule,
+		UrlAnalyticsModule,
 	],
 	controllers: [AppController],
 	providers: [
