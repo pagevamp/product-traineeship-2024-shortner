@@ -23,6 +23,8 @@ import { UrlAnalyticsModule } from '@/url-analytics/url-analytics.module';
 		ScheduleModule.forRoot(),
 		BullModule.forRoot({
 			connection: {
+				username: env.REDIS_USERNAME,
+				password: env.REDIS_PASSWORD,
 				host: env.REDIS_HOST,
 				port: env.REDIS_PORT,
 			},
