@@ -60,7 +60,7 @@ export class ShortUrlsController {
 		};
 		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL, analyticsPayload);
 		res.setHeader('Content-Type', 'text/html');
-		res.status(template.status).send(template.data);
+		res.status(template.statusCode).send(template.data);
 	}
 
 	@Delete('urls')
