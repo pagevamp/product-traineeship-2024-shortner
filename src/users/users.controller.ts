@@ -1,23 +1,11 @@
-import {
-	Controller,
-	Post,
-	Body,
-	HttpCode,
-	HttpStatus,
-	Patch,
-	UseGuards,
-	Param,
-	Req,
-	ForbiddenException,
-	Get,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, Patch, UseGuards, Req, Get } from '@nestjs/common';
 import { Request } from 'express';
 import { UsersService } from '@/users/users.service';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { VerifyUserDto } from '@/users/dto/verify-user.dto';
 import { SuccessResponse } from '@/common/response.interface';
 import { SendVerificationDto } from '@/users/dto/send-verification.dto';
-import { errorMessage, successMessage } from '@/common/messages';
+import { successMessage } from '@/common/messages';
 import { AuthGuard } from '@/auth/guard/auth.guard';
 import { UpdateUserDto } from '@/users/dto/update-user.dto';
 import { User } from '@/users/entities/user.entity';
@@ -56,47 +44,30 @@ export class UsersController {
 		};
 	}
 
-	@Patch(':id/profile')
+	@Patch('profile')
 	@UseGuards(AuthGuard)
-	async updateProfile(
-		@Param('id') id: string,
-		@Body() updateUserDto: UpdateUserDto,
-		@Req() req: Request,
-	): Promise<SuccessResponse> {
+	async updateProfile(@Body() updateUserDto: UpdateUserDto, @Req() req: Request): Promise<SuccessResponse> {
 		const user = req.user as User;
-		if (user.id !== id) {
-			throw new ForbiddenException(errorMessage.unauthorized);
-		}
-		await this.usersService.updateProfile(id, updateUserDto);
+		await this.usersService.updateProfile(user.id, updateUserDto);
 		return {
 			status: HttpStatus.OK,
 			message: successMessage.userUpdateSuccess,
 		};
 	}
 
-	@Get(':id/profile')
+	@Get('profile')
 	@UseGuards(AuthGuard)
 	@HttpCode(HttpStatus.OK)
-	async getUserDetails(@Param('id') id: string, @Req() req: Request): Promise<User> {
+	async getUserDetails(@Req() req: Request): Promise<User> {
 		const user = req.user as User;
-		if (user.id !== id) {
-			throw new ForbiddenException(errorMessage.unauthorized);
-		}
 		return await this.usersService.findById(user.id);
 	}
 
-	@Patch(':id/password')
+	@Patch('password')
 	@UseGuards(AuthGuard)
-	async updatePassword(
-		@Param('id') id: string,
-		@Body() updatePasswordDto: UpdatePasswordDto,
-		@Req() req: Request,
-	): Promise<SuccessResponse> {
+	async updatePassword(@Body() updatePasswordDto: UpdatePasswordDto, @Req() req: Request): Promise<SuccessResponse> {
 		const user = req.user as User;
-		if (user.id !== id) {
-			throw new ForbiddenException(errorMessage.unauthorized);
-		}
-		await this.usersService.updatePassword(id, updatePasswordDto);
+		await this.usersService.updatePassword(user.id, updatePasswordDto);
 		return {
 			status: HttpStatus.OK,
 			message: successMessage.userPasswordUpdateSuccess,
