@@ -4,6 +4,7 @@ import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { UrlAnalytics } from '@/url-analytics/entities/url-analytics.entity';
 import { promises as fs } from 'fs';
 import * as path from 'path';
+import { randomInt } from 'crypto';
 
 export async function seedDatabase(dataSource: DataSource): Promise<void> {
 	const userRepository = dataSource.getRepository(User);
@@ -36,16 +37,15 @@ export async function seedDatabase(dataSource: DataSource): Promise<void> {
 				redirectionLogRepository.create({
 					short_url_id: shortenedUrl.id,
 					user_id: shortenedUrl.user_id,
-					clicked_at: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000),
-					ip_address: seedData.analytics.ips[Math.floor(Math.random() * seedData.analytics.ips.length)],
+					clicked_at: new Date(Date.now() - randomInt(30) * 24 * 60 * 60 * 1000),
+					ip_address: seedData.analytics.ips[randomInt(seedData.analytics.ips.length)],
 					user_agent: `Mozilla/5.0 Browser/${
-						seedData.analytics.browsers[Math.floor(Math.random() * seedData.analytics.browsers.length)]
+						seedData.analytics.browsers[randomInt(seedData.analytics.browsers.length)]
 					}`,
-					browser: seedData.analytics.browsers[Math.floor(Math.random() * seedData.analytics.browsers.length)],
-					device: seedData.analytics.devices[Math.floor(Math.random() * seedData.analytics.devices.length)],
-					operating_system:
-						seedData.analytics.operatingSystems[Math.floor(Math.random() * seedData.analytics.operatingSystems.length)],
-					country: seedData.analytics.countries[Math.floor(Math.random() * seedData.analytics.countries.length)],
+					browser: seedData.analytics.browsers[randomInt(seedData.analytics.browsers.length)],
+					device: seedData.analytics.devices[randomInt(seedData.analytics.devices.length)],
+					operating_system: seedData.analytics.operatingSystems[randomInt(seedData.analytics.operatingSystems.length)],
+					country: seedData.analytics.countries[randomInt(seedData.analytics.countries.length)],
 				}),
 			);
 		}
