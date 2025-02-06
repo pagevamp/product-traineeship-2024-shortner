@@ -2,39 +2,48 @@
 	"users": [
 		{
 			"email": "ram@example.com",
-			"password_hash": "test@123",
-			"name": "Ram"
+			"password_hash": "$2b$10$m6dW0gHVyDHGhIer9Rd2z.Qa6tpVtqcfJEqS9baWTNPg7WXhGteGO",
+			"name": "Ram",
+			"verified_at": "2025-01-28 06:18:43.892 +0000"
 		},
 		{
 			"email": "sita@example.com",
-			"password_hash": "test@456",
-			"name": "Sita"
+			"password_hash": "$2b$10$m6dW0gHVyDHGhIer9Rd2z.Qa6tpVtqcfJEqS9baWTNPg7WXhGteGO",
+			"name": "Sita",
+			"verified_at": "2025-01-28 06:18:43.892 +0000"
 		}
 	],
-	"shortenedUrls": [
+	"urls": [
 		{
-			"user_index": 0,
+			"user_id": 0,
 			"original_url": "https://www.iban.com/country-codes",
 			"short_code": "AbCd12",
-			"expires_in_days": 2
+			"expires_at": "2025-02-12 12:44:12.420 +0000"
 		},
 		{
-			"user_index": 0,
+			"user_id": 0,
 			"original_url": "https://neon.tech/postgresql/postgresql-tutorial/postgresql-group-by",
 			"short_code": "EfGh34",
-			"expires_in_days": 3
+			"expires_at": "2025-02-12 12:44:12.420 +0000"
 		},
 		{
-			"user_index": 1,
+			"user_id": 1,
 			"original_url": "https://neon.tech/docs/data-types/array",
 			"short_code": "IjKl56",
-			"expires_in_days": 4
+			"expires_at": "2025-02-12 12:44:12.420 +0000"
 		},
 		{
-			"user_index": 1,
+			"user_id": 1,
 			"original_url": "https://kb.objectrocket.com/postgresql/join-three-tables-in-postgresql-539",
 			"short_code": "MnOp78",
-			"expires_in_days": 5
+			"expires_at": "2025-02-12 12:44:12.420 +0000"
 		}
-	]
+	],
+	"analytics": {
+		"browsers": ["Chrome", "Firefox", "Safari", "Edge", "Opera"],
+		"devices": ["Desktop", "Mobile", "Tablet"],
+		"operatingSystems": ["Windows", "MacOS", "Linux", "iOS", "Android"],
+		"ips": ["192.168.0.1", "10.0.0.2", "172.16.0.3", "203.0.113.4", "8.8.8.8"],
+		"countries": ["NP", "IN", "CN", "US", "RU"]
+	}
 }
