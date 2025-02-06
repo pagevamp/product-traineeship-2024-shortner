@@ -7,6 +7,8 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	userUpdateSuccess: 'User details updated successfully',
 	userPasswordUpdateSuccess: 'Password updated successfully',
+	noExpiredUrls: 'No short urls are expired.',
+	deleteUrl: 'URL Deletion successful  with id',
 };
 
 export const errorMessage = {
@@ -29,4 +31,8 @@ export const errorMessage = {
 	invalidCurrentPassword: 'Invalid current password',
 	unauthorized: 'Not authorized to make this request',
 	samePasswords: 'New password cannot be same as current password',
+	emailSendFailed: 'Failed to send email ->',
+	jobFailed: 'Job failed with id ->',
+	jobRemoved: 'Removing job with id ->',
+	expiredEmailTempText: 'Your short code is expired , please generate a new one if you need',
 };
