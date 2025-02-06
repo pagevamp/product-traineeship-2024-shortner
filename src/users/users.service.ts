@@ -44,16 +44,27 @@ export class UsersService {
 		await this.sendEmailVerification({ email: user.email });
 		return createdUser as User;
 	}
-
-	async findByEmail(email: string): Promise<User> {
-		return this.findUser({ email });
+	/**
+	 * A function that takes email address and optional boolean value and returns user details for that email.
+	 * If truthy value is passed as second parameter then result includes password_hash.
+	 * @param email: email address
+	 * @param boolean: truthy or falsy value
+	 */
+	async findByEmail(email: string, includePW: boolean = false): Promise<User> {
+		return this.findUser({ email }, includePW);
 	}
 
-	async findById(id: string): Promise<User> {
-		return this.findUser({ id });
+	/**
+	 * A function that takes user id and optional boolean value and returns user details for that id.
+	 * If truthy value is passed as second parameter then result includes password_hash.
+	 * @param id: uuid
+	 * @param includePW?: boolean
+	 */
+	async findById(id: string, includePW: boolean = false): Promise<User> {
+		return this.findUser({ id }, includePW);
 	}
 
-	private async findUser(where: Partial<Pick<User, 'id' | 'email'>>): Promise<User> {
+	private async findUser(where: Partial<Pick<User, 'id' | 'email'>>, includePW: boolean): Promise<User> {
 		const user = await this.userRepository.findOne({
 			where,
 			select: {
@@ -62,6 +73,8 @@ export class UsersService {
 				email: true,
 				created_at: true,
 				updated_at: true,
+				verified_at: true,
+				...(includePW ? { password_hash: true } : null),
 			},
 		});
 		if (!user) {
@@ -97,7 +110,7 @@ export class UsersService {
 	}
 
 	async updatePassword(id: string, { currentPassword, newPassword }: UpdatePasswordDto): Promise<void> {
-		const user = await this.findById(id);
+		const user = await this.findById(id, true);
 		const isPasswordValid = await compare(currentPassword, user.password_hash);
 		if (!isPasswordValid) {
 			throw new UnauthorizedException(errorMessage.invalidCurrentPassword);

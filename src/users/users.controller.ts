@@ -60,7 +60,7 @@ export class UsersController {
 	@HttpCode(HttpStatus.OK)
 	async getUserDetails(@Req() req: Request): Promise<User> {
 		const user = req.user as User;
-		return await this.usersService.findById(user.id);
+		return await this.usersService.findById(user.id, true);
 	}
 
 	@Patch('password')
