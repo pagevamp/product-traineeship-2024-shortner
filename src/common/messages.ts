@@ -7,6 +7,7 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	noExpiredUrls: 'No short urls are expired.',
 	deleteUrl: 'URL Deletion successful  with id',
+	expiryOtpDeleted: 'Expired OTP codes deleted successfully',
 };
 
 export const errorMessage = {
