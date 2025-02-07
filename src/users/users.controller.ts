@@ -58,9 +58,9 @@ export class UsersController {
 	@Get('profile')
 	@UseGuards(AuthGuard)
 	@HttpCode(HttpStatus.OK)
-	async getUserDetails(@Req() req: Request): Promise<User> {
+	async getUserDetails(@Req() req: Request): Promise<Omit<User, 'password_hash'>> {
 		const user = req.user as User;
-		return await this.usersService.findById(user.id, true);
+		return await this.usersService.excludePasswordHash(await this.usersService.findUser({ id: user.id }));
 	}
 
 	@Patch('password')
