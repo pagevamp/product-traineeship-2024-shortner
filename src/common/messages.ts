@@ -5,6 +5,8 @@ export const successMessage = {
 	verificationEmailSent: 'Verification Email has been sent successfully',
 	shortUrlCreated: 'Short URL created successfully',
 	loginSuccess: 'Login success',
+	redirectionLogsSuccessful: 'Redirection logs created successfully',
+	fetchedAnalytics: 'Redirection logs for given user has been fetched',
 };
 
 export const errorMessage = {
@@ -23,4 +25,5 @@ export const errorMessage = {
 	urlCreationFailure: 'Short URL not created',
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
 	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
+	queryDateValidation: 'Provided query endDate must be greater than startDate',
 };
