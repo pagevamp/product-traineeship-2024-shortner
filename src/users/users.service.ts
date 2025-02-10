@@ -12,6 +12,7 @@ import { signupOtpMailTemplate } from '@/template/email.template';
 import { VerifyUserDto } from '@/users/dto/verify-user.dto';
 import { SendVerificationDto } from '@/users/dto/send-verification.dto';
 import { LoggerService } from '@/logger/logger.service';
+
 @Injectable()
 export class UsersService {
 	constructor(
@@ -28,7 +29,7 @@ export class UsersService {
 		}
 		const passwordHash = await hash(createUserDto.password, env.SALT_ROUND);
 		const user = { ...createUserDto, password_hash: passwordHash };
-		const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
+		const createdUser = await this.userRepository.save(user);
 		if (!createdUser) {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
