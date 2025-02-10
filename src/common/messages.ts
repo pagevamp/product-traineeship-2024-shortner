@@ -7,6 +7,9 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	redirectionLogsSuccessful: 'Redirection logs created successfully',
 	fetchedAnalytics: 'Redirection logs for given user has been fetched',
+	noExpiredUrls: 'No short urls are expired.',
+	deleteUrl: 'URL Deletion successful  with id',
+	expiryOtpDeleted: 'Expired OTP codes deleted successfully',
 };
 
 export const errorMessage = {
@@ -26,4 +29,8 @@ export const errorMessage = {
 	authenticationFailed: 'Could not authenticate user. Has the session expired?',
 	shortCodeGenerationFailed: 'Failed to generate unique URL code after maximum retries',
 	queryDateValidation: 'Provided query endDate must be greater than startDate',
+	emailSendFailed: 'Failed to send email ->',
+	jobFailed: 'Job failed with id ->',
+	jobRemoved: 'Removing job with id ->',
+	expiredEmailTempText: 'Your short code is expired , please generate a new one if you need',
 };

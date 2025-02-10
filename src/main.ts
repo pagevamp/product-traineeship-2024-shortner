@@ -19,7 +19,7 @@ async function bootstrap(): Promise<void> {
 		logger.log('Connected to Redis');
 
 		app.setGlobalPrefix('api', {
-			exclude: [{ path: 'urls/:shortCode', method: RequestMethod.GET }],
+			exclude: [{ path: 's/:shortCode', method: RequestMethod.GET }],
 		});
 		app.enableVersioning({
 			type: VersioningType.URI,

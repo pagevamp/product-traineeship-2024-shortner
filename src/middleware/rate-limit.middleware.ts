@@ -8,6 +8,7 @@ import { redisClient } from '@/config/redis.config';
 interface RateLimitConfig {
 	windowMs: number;
 	max: number;
+	isGlobal?: boolean;
 }
 
 @Injectable()
@@ -24,6 +25,7 @@ export class RateLimitMiddlewareFactory {
 					message: 'Too many requests from this IP, please try again later.',
 				},
 				standardHeaders: true,
+				...(config.isGlobal ? { keyGenerator: () => `global-limit` } : {}),
 				legacyHeaders: false,
 				validate: { xForwardedForHeader: false },
 				store: new RedisStore({

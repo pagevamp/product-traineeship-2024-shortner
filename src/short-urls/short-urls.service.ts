@@ -1,15 +1,17 @@
+import { HTMLTemplateForRedirection } from '@/template/redirect.template';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { errorMessage } from '@/common/messages';
+import { errorMessage, successMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, TypeORMError } from 'typeorm';
+import { LessThan, MoreThan, Repository, TypeORMError, UpdateResult } from 'typeorm';
 import { generateUrlCode } from '@/short-urls/util/generate-url-code';
+import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
-import { TemplateResponse } from '@/common/response.interface';
-import { HTMLTemplateForRedirection } from '@/template/redirect.template';
 import { UrlAnalyticsService } from '@/url-analytics/url-analytics.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class ShortUrlsService {
@@ -18,6 +20,7 @@ export class ShortUrlsService {
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 		private readonly analyticsService: UrlAnalyticsService,
+		@InjectQueue('notifyExpiredUrl') private readonly queueService: Queue,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
 	async createShortUrl(
@@ -42,6 +45,12 @@ export class ShortUrlsService {
 	async findByCode(urlCode: string): Promise<ShortUrl | null> {
 		const existingUrl = await this.shortUrlRepository.findOneBy({ short_code: urlCode });
 		return existingUrl;
+	}
+
+	async findAllUrls(user: User, includeExpired: boolean = false): Promise<ShortUrl[]> {
+		return await this.shortUrlRepository.find({
+			where: { user_id: user.id, expires_at: includeExpired ? undefined : MoreThan(new Date()) },
+		});
 	}
 
 	private async generateUniqueCode(retryCount = 0): Promise<string> {
@@ -80,13 +89,47 @@ export class ShortUrlsService {
 		if (new Date() > expires_at) {
 			return {
 				status: HttpStatus.OK,
-				data: await this.template.expiredTemplate(shortURL, user.name),
+				data: await this.template.expiredTemplate(shortURL),
 			};
 		}
 		const url = original_url.includes('https') ? original_url : `https://${original_url}`;
 		return {
 			status: HttpStatus.OK,
-			data: await this.template.redirectionHTMLTemplate(url, user.name),
+			data: await this.template.redirectionHTMLTemplate(url),
 		};
+	}
+
+	async checkURLExpiry(): Promise<void> {
+		const currentDate = new Date();
+		const expiredUrls = await this.shortUrlRepository.find({
+			where: { expires_at: LessThan(currentDate) },
+			relations: ['user'],
+		});
+		if (expiredUrls.length == 0) {
+			this.logger.log(successMessage.noExpiredUrls);
+		}
+		const resolveBulkQueue = [];
+		for (const url of expiredUrls) {
+			resolveBulkQueue.push(
+				await this.queueService.add(
+					'notifyExpiredUrl',
+					{
+						id: url.id,
+						email: url.user.email,
+						shortCode: url.short_code,
+						name: url.user.name,
+					},
+					{ removeOnComplete: true, delay: 2000, attempts: 5, jobId: `notifyExpiredUrl-${url.id}` },
+				),
+			);
+		}
+
+		await Promise.all(resolveBulkQueue);
+	}
+
+	async deleteUrls(id: string): Promise<UpdateResult> {
+		const deletionResult = await this.shortUrlRepository.softDelete({ id });
+		this.logger.log(`${successMessage.deleteUrl} ${id}`);
+		return deletionResult;
 	}
 }
