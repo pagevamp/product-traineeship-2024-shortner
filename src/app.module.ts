@@ -12,6 +12,7 @@ import { AllExceptionsFilter } from '@/core/all-exceptions.filter';
 import { MailerModule } from '@/mailer/mailer.module';
 import { LoggerModule } from '@/logger/logger.module';
 import { ShortUrlsModule } from '@/short-urls/short-urls.module';
+import { UrlAnalyticsModule } from '@/url-analytics/url-analytics.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
@@ -22,6 +23,7 @@ import { ShortUrlsModule } from '@/short-urls/short-urls.module';
 		MailerModule,
 		ShortUrlsModule,
 		LoggerModule,
+		UrlAnalyticsModule,
 	],
 	controllers: [AppController],
 	providers: [
