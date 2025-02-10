@@ -14,6 +14,7 @@ import { urlRateLimiter } from '@/config/rateLimit.config';
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([ShortUrl]),
+		UrlAnalyticsModule,
 		UsersModule,
 		BullModule.registerQueue({ name: 'notifyExpiredUrl' }),
 		MailerModule,

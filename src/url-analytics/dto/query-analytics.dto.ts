@@ -37,8 +37,9 @@ export class AnalyticsQueryDto {
 	@IsOptional()
 	country: string;
 
-	@IsString()
+	@IsEnum(GroupByAndSortBy, { each: true })
 	@IsOptional()
+	@Transform(({ value }) => (typeof value === 'string' ? value.split(',') : value))
 	groupBy: string;
 
 	@IsDate()
