@@ -43,7 +43,7 @@ export class ShortUrlsService {
 		return shortUrl;
 	}
 
-	async findByCode(urlCode: string): Promise<ShortUrl | null> {
+	private async findByCode(urlCode: string): Promise<ShortUrl | null> {
 		const existingUrl = await this.shortUrlRepository.findOneBy({ short_code: urlCode });
 		return existingUrl;
 	}
@@ -116,7 +116,7 @@ export class ShortUrlsService {
 		this.logger.log(`${successMessage.urlExpiryUpdated} => ${urlData.short_code}`);
 		return {
 			short_code: urlData.short_code,
-			expires_at: expiryDate,
+			expires_at: new Date(expiryDate),
 		};
 	}
 
