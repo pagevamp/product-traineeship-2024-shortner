@@ -7,8 +7,11 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	userUpdateSuccess: 'User details updated successfully',
 	userPasswordUpdateSuccess: 'Password updated successfully',
+	redirectionLogsSuccessful: 'Redirection logs created successfully',
+	fetchedAnalytics: 'Redirection logs for given user has been fetched',
 	noExpiredUrls: 'No short urls are expired.',
 	deleteUrl: 'URL Deletion successful  with id',
+	expiryOtpDeleted: 'Expired OTP codes deleted successfully',
 };
 
 export const errorMessage = {
@@ -31,6 +34,7 @@ export const errorMessage = {
 	invalidCurrentPassword: 'Invalid current password',
 	unauthorized: 'Not authorized to make this request',
 	samePasswords: 'New password cannot be same as current password',
+	queryDateValidation: 'Provided query endDate must be greater than startDate',
 	emailSendFailed: 'Failed to send email ->',
 	jobFailed: 'Job failed with id ->',
 	jobRemoved: 'Removing job with id ->',

@@ -1,17 +1,19 @@
 import { HttpException, HttpStatus, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { hash, compare } from 'bcrypt';
 import { env } from '@/config/env.config';
 import { Verification } from '@/verification/entities/verification.entity';
 import { generateOtp } from '@/verification/util/otp.util';
-import { errorMessage } from '@/common/messages';
+import { errorMessage, successMessage } from '@/common/messages';
+import { LoggerService } from '@/logger/logger.service';
 
 @Injectable()
 export class VerificationService {
 	private readonly minutesToMakeNewOtpRequest = 2 * 60 * 1000;
 	private readonly otpExpirationMinutes = 15 * 60 * 1000;
 	constructor(
+		private readonly logger: LoggerService,
 		@InjectRepository(Verification)
 		private otpRepository: Repository<Verification>,
 	) {}
@@ -61,5 +63,16 @@ export class VerificationService {
 		}
 		await this.otpRepository.remove(validOtp);
 		return true;
+	}
+
+	async removeExpiredOtp(): Promise<void> {
+		const expiredOtp = await this.otpRepository.find({
+			where: { expires_at: LessThan(new Date()) },
+		});
+		if (expiredOtp.length === 0) {
+			return;
+		}
+		await this.otpRepository.remove(expiredOtp);
+		this.logger.log(successMessage.expiryOtpDeleted);
 	}
 }
