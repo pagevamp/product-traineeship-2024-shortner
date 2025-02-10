@@ -65,17 +65,21 @@ export class ShortUrlsController {
 		res.status(template.statusCode).send(template.data);
 	}
 
-	@Patch('urls')
+	@Patch('urls/:id')
 	async updateURLexpiry(
-		@Query('shortCode') shortCode: string,
+		@Param('id') id: string,
 		@Body() body: UpdateShortUrlDto,
+		@Req() req: Request,
 	): Promise<GetMethodResponse> {
-		const newExpiryDate = body.expiryDate;
-		const updatedData = await this.shortUrlsService.updateExpiryDateByCode(shortCode, newExpiryDate);
+		const user = req.user as User;
+
+		const updatedData = await this.shortUrlsService.updateExpiryDateByCode(id, body, user.id);
 		return { status: HttpStatus.OK, message: successMessage.urlExpiryUpdated, data: updatedData };
 	}
-	@Delete('urls')
-	async delete(@Param('id') id: string): Promise<UpdateResult> {
-		return await this.shortUrlsService.deleteUrls(id);
+	@Delete('urls/:id')
+	async delete(@Param('id') id: string, @Req() req: Request): Promise<UpdateResult> {
+		const user = req.user as User;
+
+		return await this.shortUrlsService.deleteUrls(id, user.id);
 	}
 }
