@@ -13,6 +13,7 @@ import { MailerModule } from '@/mailer/mailer.module';
 import { LoggerModule } from '@/logger/logger.module';
 import { HealthModule } from '@/health/health.module';
 import { ShortUrlsModule } from '@/short-urls/short-urls.module';
+import { UrlAnalyticsModule } from '@/url-analytics/url-analytics.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from '@/cron/cron.module';
 import { BullModule } from '@nestjs/bullmq';
@@ -34,6 +35,7 @@ import { BullModule } from '@nestjs/bullmq';
 		MailerModule,
 		ShortUrlsModule,
 		LoggerModule,
+		UrlAnalyticsModule,
 		CronModule,
 		HealthModule,
 	],

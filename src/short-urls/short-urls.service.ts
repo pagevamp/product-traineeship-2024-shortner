@@ -9,6 +9,7 @@ import { generateUrlCode } from '@/short-urls/util/generate-url-code';
 import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
 import { LoggerService } from '@/logger/logger.service';
+import { UrlAnalyticsService } from '@/url-analytics/url-analytics.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 
@@ -18,6 +19,7 @@ export class ShortUrlsService {
 		private readonly logger: LoggerService,
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
+		private readonly analyticsService: UrlAnalyticsService,
 		@InjectQueue('notifyExpiredUrl') private readonly queueService: Queue,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
@@ -64,30 +66,36 @@ export class ShortUrlsService {
 		return code;
 	}
 
-	async redirectToOriginal(shortCode: string, shortURL: string): Promise<TemplateResponse> {
+	async redirectToOriginal(
+		shortCode: string,
+		shortURL: string,
+		analyticsPayload: { userAgent: string; ipAddress: string },
+	): Promise<TemplateResponse> {
 		const urlData = await this.shortUrlRepository.findOne({
 			where: { short_code: shortCode },
 			withDeleted: true,
 			relations: ['user'],
 		});
+		const templateData = {
+			statusCode: HttpStatus.OK,
+			data: '',
+		};
 		if (!urlData) {
-			return {
-				status: HttpStatus.NOT_FOUND,
-				data: await this.template.pageNotFoundTemp(),
-			};
+			templateData.statusCode = HttpStatus.NOT_FOUND;
+			templateData.data = await this.template.pageNotFoundTemp();
+			return templateData;
 		}
-		const { original_url, user, expires_at } = urlData;
+		const { id, original_url, user, expires_at } = urlData;
+
+		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload });
+
 		if (new Date() > expires_at) {
-			return {
-				status: HttpStatus.OK,
-				data: await this.template.expiredTemplate(shortURL, user.name),
-			};
+			templateData.data = await this.template.expiredTemplate(shortURL);
+			return templateData;
 		}
 		const url = original_url.includes('https') ? original_url : `https://${original_url}`;
-		return {
-			status: HttpStatus.OK,
-			data: await this.template.redirectionHTMLTemplate(url, user.name),
-		};
+		templateData.data = await this.template.redirectionHTMLTemplate(url);
+		return templateData;
 	}
 
 	async updateExpiryDateByCode(code: string, newExpiryDate: Date): Promise<Partial<ShortUrl>> {
