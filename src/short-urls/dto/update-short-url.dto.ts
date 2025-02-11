@@ -1,4 +1,11 @@
-import { PickType } from '@nestjs/mapped-types';
-import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
+import { errorMessage } from '@/common/messages';
+import { Transform } from 'class-transformer';
+import { IsDate, MinDate, ValidateIf } from 'class-validator';
 
-export class UpdateShortUrlDto extends PickType(CreateShortUrlDto, ['expiryDate'] as const) {}
+export class UpdateShortUrlDto {
+	@IsDate()
+	@ValidateIf((o) => o.expires_at !== null)
+	@Transform(({ value }) => new Date(value), { toClassOnly: true })
+	@MinDate(new Date(), { message: errorMessage.currentDateValidation })
+	expiryDate: Date;
+}
