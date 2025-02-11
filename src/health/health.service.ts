@@ -20,7 +20,7 @@ export class HealthService {
 	) {}
 
 	async checkDatabase(): Promise<HealthIndicatorResult> {
-		return this.db.pingCheck('database', { timeout: 300 });
+		return this.db.pingCheck('database', { timeout: 1000 });
 	}
 
 	async checkMemoryHeap(): Promise<HealthIndicatorResult> {
