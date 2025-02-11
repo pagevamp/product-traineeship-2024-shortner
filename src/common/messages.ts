@@ -35,7 +35,6 @@ export const errorMessage = {
 	invalidCurrentPassword: 'Invalid current password',
 	unauthorized: 'Not authorized to make this request',
 	samePasswords: 'New password cannot be same as current password',
-	unauthorized: 'Not authorized to make this request',
 	urlNotFound: 'URL not found',
 	urlNotUpdated: 'The expiry date of URL could not be updated',
 	queryDateValidation: 'Provided query endDate must be greater than startDate',
