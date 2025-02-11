@@ -5,8 +5,9 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
-	Post,
 	Param,
+	Patch,
+	Post,
 	Query,
 	Req,
 	Res,
@@ -18,12 +19,11 @@ import {
 import { Request, Response } from 'express';
 import { ShortUrlsService } from '@/short-urls/short-urls.service';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { GetMethodResponse } from '@/common/response.interface';
+import { GetMethodResponse, SuccessResponse } from '@/common/response.interface';
 import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
-import { UpdateResult } from 'typeorm';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { CustomShortURLInterceptor } from '@/short-urls/interceptor/url.interceptor';
 
@@ -58,13 +58,33 @@ export class ShortUrlsController {
 	async redirect(@Param('shortCode') shortCode: string, @Res() res: Response, @Req() req: Request): Promise<void> {
 		if (req.params.shortCode === 'favicon.ico') res.status(204);
 		const shortURL = `${req.headers.host}/${shortCode}`;
-		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL);
+		const analyticsPayload = {
+			userAgent: req.headers['user-agent'] as string,
+			ipAddress: req.ip as string,
+		};
+		const template = await this.shortUrlsService.redirectToOriginal(shortCode, shortURL, analyticsPayload);
 		res.setHeader('Content-Type', 'text/html');
-		res.status(template.status).send(template.data);
+		res.status(template.statusCode).send(template.data);
 	}
 
-	@Delete('urls')
-	async delete(@Param('id') id: string): Promise<UpdateResult> {
-		return await this.shortUrlsService.deleteUrls(id);
+	@Patch('urls/:id')
+	async updateURLexpiry(
+		@Param('id') id: string,
+		@Body() body: UpdateShortUrlDto,
+		@Req() req: Request,
+	): Promise<GetMethodResponse> {
+		const user = req.user as User;
+		const updatedData = await this.shortUrlsService.updateExpiryDateByCode(id, body, user.id);
+		return { status: HttpStatus.OK, message: successMessage.urlExpiryUpdated, data: updatedData };
+	}
+
+	@Delete('urls/:id')
+	async delete(@Param('id') id: string, @Req() req: Request): Promise<SuccessResponse> {
+		const user = req.user as User;
+		await this.shortUrlsService.deleteUrls(id, user.id);
+		return {
+			status: HttpStatus.OK,
+			message: successMessage.deleteUrl,
+		};
 	}
 }
