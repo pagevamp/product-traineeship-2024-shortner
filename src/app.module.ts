@@ -17,7 +17,6 @@ import { UrlAnalyticsModule } from '@/url-analytics/url-analytics.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from '@/cron/cron.module';
 import { BullModule } from '@nestjs/bullmq';
-import { UrlAnalyticsModule } from '@/url-analytics/url-analytics.module';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true, validate }),
