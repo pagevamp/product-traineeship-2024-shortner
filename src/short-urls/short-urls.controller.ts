@@ -5,8 +5,9 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
-	Post,
 	Param,
+	Patch,
+	Post,
 	Query,
 	Req,
 	Res,
@@ -17,13 +18,13 @@ import {
 import { Request, Response } from 'express';
 import { ShortUrlsService } from '@/short-urls/short-urls.service';
 import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
-import { SuccessResponse } from '@/common/response.interface';
+import { GetMethodResponse, SuccessResponse } from '@/common/response.interface';
 import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
-import { UpdateResult } from 'typeorm';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
+import { UpdateShortUrlDto } from '@/short-urls/dto/update-short-url.dto';
 
 @UseGuards(AuthGuard)
 @Controller()
@@ -63,8 +64,24 @@ export class ShortUrlsController {
 		res.status(template.statusCode).send(template.data);
 	}
 
-	@Delete('urls')
-	async delete(@Param('id') id: string): Promise<UpdateResult> {
-		return await this.shortUrlsService.deleteUrls(id);
+	@Patch('urls/:id')
+	async updateURLexpiry(
+		@Param('id') id: string,
+		@Body() body: UpdateShortUrlDto,
+		@Req() req: Request,
+	): Promise<GetMethodResponse> {
+		const user = req.user as User;
+		const updatedData = await this.shortUrlsService.updateExpiryDateByCode(id, body, user.id);
+		return { status: HttpStatus.OK, message: successMessage.urlExpiryUpdated, data: updatedData };
+	}
+
+	@Delete('urls/:id')
+	async delete(@Param('id') id: string, @Req() req: Request): Promise<SuccessResponse> {
+		const user = req.user as User;
+		await this.shortUrlsService.deleteUrls(id, user.id);
+		return {
+			status: HttpStatus.OK,
+			message: successMessage.deleteUrl,
+		};
 	}
 }

@@ -23,7 +23,7 @@ export class ExpiryEmailConsumer extends WorkerHost {
 			text: errorMessage.expiredEmailTempText,
 		};
 		await this.mailerService.sendEmail(emailData);
-		await this.shortUrlService.deleteUrls(job.data.id);
+		await this.shortUrlService.deleteUrls(job.data.id, job.data.user_id);
 		this.logger.log(`${job.data.shortCode} is expired and hence deleted`);
 	}
 
@@ -42,7 +42,7 @@ export class ExpiryEmailConsumer extends WorkerHost {
 		if (job.attemptsMade >= (job.opts.attempts || 5)) {
 			this.logger.log(`${errorMessage.emailSendFailed} ${job.data.email}`);
 			this.logger.log(`${errorMessage.jobRemoved} ${job.id}`);
-			await this.shortUrlService.deleteUrls(job.data.id);
+			await this.shortUrlService.deleteUrls(job.data.id, job.data.user_id);
 			job.remove();
 		}
 	}
