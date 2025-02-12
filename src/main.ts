@@ -6,12 +6,20 @@ import { ValidationPipe, RequestMethod } from '@nestjs/common';
 import { redisClient } from '@/config/redis.config';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
 
 async function bootstrap(): Promise<void> {
 	const logger = new Logger();
 	const port = env.APP_PORT;
 	try {
 		const app = await NestFactory.create<NestExpressApplication>(AppModule);
+		app.use(helmet());
+		app.enableCors({
+			origin: env.CORS_ORIGIN,
+			credentials: true,
+			preflightContinue: false,
+			optionsSuccessStatus: 204,
+		});
 		app.set('trust proxy', 3);
 		app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 		app.useGlobalPipes(new ValidationPipe());

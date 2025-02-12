@@ -24,6 +24,7 @@ export const env = {
 	SALT_ROUND: +(process.env.SALT_ROUND || 10),
 	LOGTAIL_TOKEN: process.env.LOGTAIL_TOKEN,
 	DEFAULT_URL_EXPIRY_TIME: process.env.DEFAULT_URL_EXPIRY_TIME || '1 day',
+	CORS_ORIGIN: process.env.CORS_ORIGIN,
 } as const;
 
 export enum APP_ENVIRONVENT {
@@ -65,6 +66,7 @@ const envSchema = z
 		SALT_ROUND: z.coerce.number().default(10),
 		LOGTAIL_TOKEN: z.string().min(5),
 		DEFAULT_URL_EXPIRY_TIME: z.string(),
+		CORS_ORIGIN: z.string().url(),
 	})
 	.required();
 

@@ -52,6 +52,7 @@
 		"dotenv": "^16.4.7",
 		"express-rate-limit": "^7.5.0",
 		"geoip-country": "^5.0.202501212341",
+		"helmet": "^8.0.0",
 		"nanoid": "^5.0.9",
 		"nest-winston": "^1.9.7",
 		"nodemailer": "^6.9.16",
