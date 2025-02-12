@@ -3,6 +3,7 @@ import { MailerDto } from '@/mailer/dto/mailer.dto';
 import { env } from '@/config/env.config';
 import { LoggerService } from '@/logger/logger.service';
 import { Injectable } from '@nestjs/common';
+import { successMessage } from '@/common/messages';
 @Injectable()
 export class MailerService {
 	constructor(private logger: LoggerService) {}
@@ -29,6 +30,6 @@ export class MailerService {
 			text,
 		};
 		await this.transporter.sendMail(mailOptions);
-		this.logger.log(`Mail sent to ${to[0].address} successfully`);
+		this.logger.log(`${successMessage.mailSentSuccess}${to[0].address}`);
 	}
 }

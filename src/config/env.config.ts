@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { config } from 'dotenv';
+import { errorMessage } from '@/common/messages';
 config();
 export const env = {
 	POSTGRES_DB: process.env.POSTGRES_DB,
@@ -23,6 +24,7 @@ export const env = {
 	SALT_ROUND: +(process.env.SALT_ROUND || 10),
 	LOGTAIL_TOKEN: process.env.LOGTAIL_TOKEN,
 	DEFAULT_URL_EXPIRY_TIME: process.env.DEFAULT_URL_EXPIRY_TIME || '1 day',
+	CORS_ORIGIN: process.env.CORS_ORIGIN,
 } as const;
 
 export enum APP_ENVIRONVENT {
@@ -37,27 +39,34 @@ enum SMTP_PORTS {
 }
 const envSchema = z
 	.object({
-		POSTGRES_DB: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		POSTGRES_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		POSTGRES_PASSWORD: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		POSTGRES_PORT: z.coerce.number().gt(0, { message: 'Port cannot be empty' }).default(5432),
-		DB_HOST: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		APP_PORT: z.coerce.number().gt(0, { message: 'Port cannot be empty' }).default(3000),
+		POSTGRES_DB: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
+		POSTGRES_USER: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
+		POSTGRES_PASSWORD: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
+		POSTGRES_PORT: z.coerce
+			.number()
+			.gt(0, { message: `Port${errorMessage.cannotBeEmpty}` })
+			.default(5432),
+		DB_HOST: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
+		APP_PORT: z.coerce
+			.number()
+			.gt(0, { message: `Port${errorMessage.cannotBeEmpty}` })
+			.default(3000),
 		NODE_ENV: z.nativeEnum(APP_ENVIRONVENT),
-		EMAIL_HOST: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
+		EMAIL_HOST: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
 		EMAIL_PORT: z.nativeEnum(SMTP_PORTS).default(587),
-		EMAIL_USER: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		EMAIL_PASS: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		EMAIL_SENDER_NAME: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
+		EMAIL_USER: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
+		EMAIL_PASS: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
+		EMAIL_SENDER_NAME: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
 		REDIS_USERNAME: z.string(),
 		REDIS_PASSWORD: z.string(),
-		REDIS_PORT: z.number().gt(0, { message: 'Port cannot be empty' }),
-		REDIS_HOST: z.string().min(2, { message: 'Must be atleast 2 characters long' }),
-		JWT_SECRET: z.string().min(5, { message: 'JWT secret key cannot be smaller than 5' }),
-		JWT_EXPIRATION: z.string().min(1, { message: 'JWT_EXPIRATION time cannot be empty' }),
+		REDIS_PORT: z.number().gt(0, { message: `Port${errorMessage.cannotBeEmpty}` }),
+		REDIS_HOST: z.string().min(2, { message: errorMessage.minTwoLengthValidation }),
+		JWT_SECRET: z.string().min(5, { message: errorMessage.minFiveLengthValidation }),
+		JWT_EXPIRATION: z.string().min(1, { message: `JWT_EXPIRATION time${errorMessage.cannotBeEmpty}` }),
 		SALT_ROUND: z.coerce.number().default(10),
 		LOGTAIL_TOKEN: z.string().min(5),
 		DEFAULT_URL_EXPIRY_TIME: z.string(),
+		CORS_ORIGIN: z.string().url(),
 	})
 	.required();
 
