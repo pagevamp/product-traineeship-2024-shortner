@@ -2,6 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from
 import { Request, Response } from 'express';
 import { env } from '@/config/env.config';
 import { LoggerService } from '@/logger/logger.service';
+import { errorMessage } from '@/common/messages';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -18,7 +19,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 				? this.getHttpErrorMessage(exception)
 				: exception instanceof Error
 					? exception.message
-					: 'Something went wrong';
+					: errorMessage.smthWentWrong;
 		const stack = exception instanceof Error ? exception.stack : undefined;
 
 		if (statusCode === HttpStatus.TOO_MANY_REQUESTS) {

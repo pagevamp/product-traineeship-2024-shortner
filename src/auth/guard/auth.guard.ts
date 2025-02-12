@@ -42,7 +42,7 @@ export class AuthGuard implements CanActivate {
 			if (error instanceof NotFoundException) {
 				throw new NotFoundException(errorMessage.userNotFound);
 			}
-			throw new UnauthorizedException('failed to authenticate');
+			throw new UnauthorizedException(errorMessage.authenticationFailed);
 		}
 
 		return true;
