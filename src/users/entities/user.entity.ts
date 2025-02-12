@@ -15,7 +15,7 @@ export class User {
 	name: string;
 
 	@Column({ type: 'timestamptz', default: null })
-	verified_at: Date;
+	verified_at: Date | null;
 
 	@CreateDateColumn({ type: 'timestamptz' })
 	created_at: Date;

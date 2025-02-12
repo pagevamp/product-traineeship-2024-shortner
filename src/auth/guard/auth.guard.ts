@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
 
 		try {
 			const payload = await this.jwtService.verify(token, { secret: env.JWT_SECRET });
-			await this.usersService.findByEmail(payload.email);
+			this.usersService.excludePasswordHash(await this.usersService.findUser({ id: payload.id }));
 			request['user'] = payload;
 		} catch (error) {
 			if (error instanceof NotFoundException) {
