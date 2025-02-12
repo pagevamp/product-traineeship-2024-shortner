@@ -7,7 +7,6 @@ export const successMessage = {
 	loginSuccess: 'Login success',
 	userUpdateSuccess: 'User details updated successfully',
 	userPasswordUpdateSuccess: 'Password updated successfully',
-	urlExpiryUpdated: 'Expiry date of short code has been updated',
 	redirectionLogsSuccessful: 'Redirection logs created successfully',
 	fetchedAnalytics: 'Redirection logs for given user has been fetched',
 	urlExpiryUpdated: 'Expiry date updated',
