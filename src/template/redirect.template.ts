@@ -1,5 +1,5 @@
 export class HTMLTemplateForRedirection {
-	private cssStyle = `
+	private readonly cssStyle = `
 	        body {
             margin: 0;
             padding: 0;
