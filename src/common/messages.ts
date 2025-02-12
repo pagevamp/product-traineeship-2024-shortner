@@ -38,10 +38,10 @@ export const errorMessage = {
 	emailSendFailed: 'Failed to send email to ',
 	jobFailed: 'Job failed with id: ',
 	jobRemoved: 'Removing job with id: ',
-	expiredEmailTempText: 'Your short code is expired , please generate a new one if you need',
+	expiredEmailTempText: 'Your short code is expired, please generate a new one if you need',
 	smthWentWrong: 'Something went wrong',
-	dbConnectionFailed: 'Error Connection to database: ',
+	dbConnectionFailed: 'Error connecting to database ',
 	ipLimitExceedError: 'Too many requests',
-	ipLimitExceedMessage: 'Too many requests from this IP, please try again later.',
+	ipLimitExceedMessage: 'Too many requests, please try again later.',
 	waitToMakeReq: 'Please wait two minutes to make new request.',
 };
