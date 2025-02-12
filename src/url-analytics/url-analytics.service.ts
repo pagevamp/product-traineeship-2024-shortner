@@ -6,7 +6,6 @@ import { CreateUrlAnalyticsDto } from '@/url-analytics/dto/create-analytics.dto'
 import { lookup } from 'geoip-country';
 import { UAParser } from 'ua-parser-js';
 import { AnalyticsQueryDto } from '@/url-analytics/dto/query-analytics.dto';
-import { successMessage } from '@/common/messages';
 import { LoggerService } from '@/logger/logger.service';
 import { QueryFilterInterface } from '@/common/response.interface';
 
@@ -113,7 +112,6 @@ export class UrlAnalyticsService {
 		queryBuilder.skip(skip).limit(limit);
 
 		const reports = await queryBuilder.getRawMany();
-		this.logger.log(successMessage.fetchedAnalytics);
 		return { reports, ...(groupBy ? {} : { numberOfHits }) };
 	}
 

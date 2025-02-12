@@ -46,10 +46,14 @@ export class ShortUrlsController {
 
 	@Get('urls')
 	@HttpCode(HttpStatus.OK)
-	async findAll(@Req() req: Request, @Query('expired') expired?: string): Promise<ShortUrl[]> {
+	async findAll(
+		@Req() req: Request,
+		@Query('expired') expired?: string,
+		@Query('search') search?: string,
+	): Promise<ShortUrl[]> {
 		const user = req.user as User;
 		const isExpired = expired === 'true';
-		return await this.shortUrlsService.findAllUrls(user, isExpired);
+		return await this.shortUrlsService.findAllUrls(user, isExpired, search);
 	}
 
 	@Avoid()

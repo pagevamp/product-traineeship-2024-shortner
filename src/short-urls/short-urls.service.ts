@@ -4,7 +4,7 @@ import { CreateShortUrlDto } from '@/short-urls/dto/create-short-url.dto';
 import { errorMessage, successMessage } from '@/common/messages';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, MoreThan, Repository, TypeORMError, UpdateResult } from 'typeorm';
+import { LessThan, Repository, TypeORMError, UpdateResult } from 'typeorm';
 import { generateUrlCode } from '@/short-urls/util/generate-url-code';
 import { TemplateResponse } from '@/common/response.interface';
 import { User } from '@/users/entities/user.entity';
@@ -21,7 +21,8 @@ export class ShortUrlsService {
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 		private readonly analyticsService: UrlAnalyticsService,
-		@InjectQueue('notifyExpiredUrl') private readonly queueService: Queue,
+		@InjectQueue('notifyExpiredUrl') private readonly expiryQueueService: Queue,
+		@InjectQueue('urlAnalyticsQueue') private readonly analitycsQueue: Queue,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
 	async createShortUrl(
@@ -48,10 +49,22 @@ export class ShortUrlsService {
 		return existingUrl;
 	}
 
-	async findAllUrls(user: User, includeExpired: boolean = false): Promise<ShortUrl[]> {
-		return await this.shortUrlRepository.find({
-			where: { user_id: user.id, expires_at: includeExpired ? undefined : MoreThan(new Date()) },
-		});
+	async findAllUrls(user: User, includeExpired: boolean = false, searchQuery?: string): Promise<ShortUrl[]> {
+		const queryBuilder = this.shortUrlRepository
+			.createQueryBuilder('url')
+			.where('url.user_id = :userId', { userId: user.id });
+
+		if (!includeExpired) {
+			queryBuilder.andWhere('url.expires_at > :now', { now: new Date() });
+		}
+
+		if (searchQuery) {
+			queryBuilder.andWhere('(url.short_code ILIKE :search OR url.original_url ILIKE :search)', {
+				search: `%${searchQuery}%`,
+			});
+		}
+
+		return await queryBuilder.getMany();
 	}
 
 	private async generateUniqueCode(retryCount = 0): Promise<string> {
@@ -87,8 +100,11 @@ export class ShortUrlsService {
 			return templateData;
 		}
 		const { id, original_url, user, expires_at } = urlData;
-
-		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload });
+		await this.analitycsQueue.add(
+			'urlAnalyticsQueue',
+			{ userId: user.id, shortUrlId: id, ...analyticsPayload },
+			{ removeOnComplete: true, delay: 2000, attempts: 5, jobId: `urlAnalytics-${urlData.id}` },
+		);
 
 		if (new Date() > expires_at) {
 			templateData.data = await this.template.expiredTemplate(shortURL);
@@ -132,7 +148,7 @@ export class ShortUrlsService {
 		const resolveBulkQueue = [];
 		for (const url of expiredUrls) {
 			resolveBulkQueue.push(
-				await this.queueService.add(
+				await this.expiryQueueService.add(
 					'notifyExpiredUrl',
 					{
 						id: url.id,
