@@ -21,7 +21,8 @@ export class ShortUrlsService {
 		@InjectRepository(ShortUrl)
 		private shortUrlRepository: Repository<ShortUrl>,
 		private readonly analyticsService: UrlAnalyticsService,
-		@InjectQueue('notifyExpiredUrl') private readonly queueService: Queue,
+		@InjectQueue('notifyExpiredUrl') private readonly expiryQueueService: Queue,
+		@InjectQueue('urlAnalyticsQueue') private readonly analitycsQueue: Queue,
 	) {}
 	private readonly template = new HTMLTemplateForRedirection();
 	async createShortUrl(
@@ -87,8 +88,11 @@ export class ShortUrlsService {
 			return templateData;
 		}
 		const { id, original_url, user, expires_at } = urlData;
-
-		await this.analyticsService.createAnalytics({ userId: user.id, shortUrlId: id, ...analyticsPayload });
+		await this.analitycsQueue.add(
+			'urlAnalyticsQueue',
+			{ userId: user.id, shortUrlId: id, ...analyticsPayload },
+			{ removeOnComplete: true, delay: 2000, attempts: 5, jobId: `urlAnalytics-${urlData.id}` },
+		);
 
 		if (new Date() > expires_at) {
 			templateData.data = await this.template.expiredTemplate(shortURL);
@@ -132,7 +136,7 @@ export class ShortUrlsService {
 		const resolveBulkQueue = [];
 		for (const url of expiredUrls) {
 			resolveBulkQueue.push(
-				await this.queueService.add(
+				await this.expiryQueueService.add(
 					'notifyExpiredUrl',
 					{
 						id: url.id,

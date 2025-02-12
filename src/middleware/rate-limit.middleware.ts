@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import rateLimit from 'express-rate-limit';
 import { RedisStore } from 'rate-limit-redis';
 import { redisClient } from '@/config/redis.config';
+import { errorMessage } from '@/common/messages';
 
 interface RateLimitConfig {
 	windowMs: number;
@@ -21,8 +22,8 @@ export class RateLimitMiddlewareFactory {
 				max: config.max || 100,
 				message: {
 					status: 429,
-					error: 'Too many requests',
-					message: 'Too many requests from this IP, please try again later.',
+					error: errorMessage.ipLimitExceedError,
+					message: errorMessage.ipLimitExceedMessage,
 				},
 				standardHeaders: true,
 				...(config.isGlobal ? { keyGenerator: () => `global-limit` } : {}),
