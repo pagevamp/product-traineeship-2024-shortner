@@ -12,8 +12,13 @@ export class HTMLTemplateForRedirection {
             height: 100vh;
             text-align: center;
         }
+		h3 {
+			font-size: 2.5rem;
+			margin: 0 0 20px 0;
+			color:rgb(130, 255, 85);
+		}
         h1 {
-            font-size: 3rem;
+            font-size: 4rem;
             margin: 0 0 20px 0;
             color: #ff5555;
         }
@@ -60,7 +65,15 @@ export class HTMLTemplateForRedirection {
 				    <style>
 				${this.cssStyle}
 				    </style>
-				    <script>
+				</head>
+				<body>
+				    <div>
+				        <h3>Are you sure you want to redirect?</h3>
+				        <a href="${url}">
+				            <button id="disable-button" disabled>Redirecting in 3 seconds...</button>
+				        </a>
+				    </div>
+					<script>
 				        window.onload = function () {
 				            const button = document.getElementById('disable-button');
 				            setTimeout(function () {
@@ -69,14 +82,6 @@ export class HTMLTemplateForRedirection {
 				            }, 3000);
 				        };
 				    </script>
-				</head>
-				<body>
-				    <div>
-				        <h1>Are you sure you want to redirect?</h1>
-				        <a href="${url}">
-				            <button id="disable-button" disabled>Redirecting in 3 seconds...</button>
-				        </a>
-				    </div>
 				</body>
 				</html>
 		`;
