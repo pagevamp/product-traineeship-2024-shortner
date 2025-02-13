@@ -70,11 +70,15 @@ export class UsersController {
 	}
 
 	@Get('profile')
+	@UseInterceptors(CustomUserInterceptor)
 	@UseGuards(AuthGuard)
 	@HttpCode(HttpStatus.OK)
-	async getUserDetails(@Req() req: Request): Promise<Omit<User, 'password_hash'>> {
+	async getUserDetails(@Req() req: Request): Promise<Omit<GetMethodResponse, 'status' | 'message'>> {
 		const user = req.user as User;
-		return this.usersService.excludePasswordHash(await this.usersService.findUser({ id: user.id }));
+		const userProfile = this.usersService.excludePasswordHash(await this.usersService.findUser({ id: user.id }));
+		return {
+			data: [userProfile],
+		};
 	}
 
 	@Patch('password')

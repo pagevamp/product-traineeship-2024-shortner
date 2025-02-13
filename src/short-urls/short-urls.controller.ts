@@ -24,7 +24,6 @@ import { AuthGuard } from '@/auth/guard/auth.guard';
 import { User } from '@/users/entities/user.entity';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
-import { ShortUrl } from '@/short-urls/entities/short-url.entity';
 import { CustomShortURLInterceptor } from '@/short-urls/interceptor/url.interceptor';
 import { UpdateShortUrlDto } from '@/short-urls/dto/update-short-url.dto';
 
@@ -47,14 +46,18 @@ export class ShortUrlsController {
 
 	@Get('urls')
 	@HttpCode(HttpStatus.OK)
+	@UseInterceptors(CustomShortURLInterceptor)
 	async findAll(
 		@Req() req: Request,
 		@Query('expired') expired?: string,
 		@Query('search') search?: string,
-	): Promise<ShortUrl[]> {
+	): Promise<Omit<GetMethodResponse, 'status' | 'message'>> {
 		const user = req.user as User;
 		const isExpired = expired === 'true';
-		return await this.shortUrlsService.findAllUrls(user, isExpired, search);
+		const urlData = await this.shortUrlsService.findAllUrls(user, isExpired, search);
+		return {
+			data: urlData,
+		};
 	}
 
 	@Avoid()
