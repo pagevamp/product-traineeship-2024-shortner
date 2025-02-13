@@ -17,7 +17,7 @@ export class CreateShortenedUrlsTable1736838705897 implements MigrationInterface
                 REFERENCES users (id)
                 ON DELETE CASCADE
                 ON UPDATE CASCADE,
-            CONSTRAINT unique_shortened_urls_short_code UNIQUE (short_code) 
+            CONSTRAINT UQ_shortened_urls_short_code UNIQUE (short_code) 
             );
         `);
 	}
