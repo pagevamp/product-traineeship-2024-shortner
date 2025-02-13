@@ -20,7 +20,7 @@ export class ExpiryEmailConsumer extends WorkerHost {
 			subject: expiredShortCodeMailTemplate.subject,
 			to: [{ name: job.data.name, address: job.data.email }],
 			html: expiredShortCodeMailTemplate.body(job.data.shortCode, job.data.name),
-			text: errorMessage.expiredEmailTempText,
+			text: expiredShortCodeMailTemplate.text(job.data.shortCode, job.data.name),
 		};
 		await this.mailerService.sendEmail(emailData);
 		await this.shortUrlService.deleteUrls(job.data.id, job.data.user_id);

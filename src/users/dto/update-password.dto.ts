@@ -8,7 +8,7 @@ export class UpdatePasswordDto {
 
 	@IsString()
 	@IsNotEmpty()
-	@MinLength(5, { message: errorMessage.minLengthValidation })
+	@MinLength(5, { message: errorMessage.minFiveLengthValidation })
 	@MaxLength(15, { message: errorMessage.maxLengthValidation })
 	newPassword: string;
 }

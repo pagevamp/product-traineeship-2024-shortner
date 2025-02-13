@@ -109,6 +109,7 @@ export class UsersService {
 			subject: signupOtpMailTemplate.subject,
 			to: [{ name: user.name, address: user.email }],
 			html: signupOtpMailTemplate.body(otp, user.name),
+			text: signupOtpMailTemplate.text(otp, user.name),
 		});
 	}
 
