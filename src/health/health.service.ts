@@ -20,7 +20,7 @@ export class HealthService {
 	) {}
 
 	async checkDatabase(): Promise<HealthIndicatorResult> {
-		return this.db.pingCheck('database', { timeout: 300 });
+		return this.db.pingCheck('database', { timeout: 10000 });
 	}
 
 	async checkMemoryHeap(): Promise<HealthIndicatorResult> {
@@ -29,10 +29,6 @@ export class HealthService {
 
 	async checkMemoryRSS(): Promise<HealthIndicatorResult> {
 		return this.memory.checkRSS('memory_rss', 150 * 1024 * 1024);
-	}
-
-	async checkDiskStorage(): Promise<HealthIndicatorResult> {
-		return this.disk.checkStorage('storage', { thresholdPercent: 0.8, path: '/' });
 	}
 
 	async checkRedis(): Promise<HealthIndicatorResult> {
@@ -52,7 +48,6 @@ export class HealthService {
 			() => this.checkDatabase(),
 			() => this.checkMemoryHeap(),
 			() => this.checkMemoryRSS(),
-			() => this.checkDiskStorage(),
 			() => this.checkRedis(),
 		]);
 	}
