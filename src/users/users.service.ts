@@ -36,7 +36,7 @@ export class UsersService {
 		}
 		const passwordHash = await hash(createUserDto.password, env.SALT_ROUND);
 		const user = { ...createUserDto, password_hash: passwordHash };
-		const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
+		const createdUser = await this.userRepository.save(user);
 		if (!createdUser) {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
