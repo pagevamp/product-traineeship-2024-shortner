@@ -17,16 +17,6 @@ export class VerificationEmailConsumer extends WorkerHost {
 		await this.userService.sendEmailVerification(job.data.email);
 	}
 
-	@OnWorkerEvent('active')
-	onActive(job: Job): void {
-		this.logger.log(`Processing job ${job.id} of type ${job.name} }`);
-	}
-
-	@OnWorkerEvent('completed')
-	onComplete(job: Job): void {
-		this.logger.log(`Job with id ${job.id} of type ${job.name} has been completed`);
-	}
-
 	@OnWorkerEvent('failed')
 	async onFailed(job: Job, err: Error): Promise<void> {
 		this.logger.error(`${errorMessage.jobFailed} ${job.id} of type ${job.name} \n ${err.message}`);
