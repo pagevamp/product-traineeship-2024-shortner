@@ -24,6 +24,24 @@ export class CustomShortURLInterceptor implements NestInterceptor {
 		context: ExecutionContext,
 		next: CallHandler<RawURLResponse>,
 	): Observable<TransformedUrlResponse> | Promise<Observable<TransformedUrlResponse>> {
+		const req = context.switchToHttp().getRequest();
+		const method = req['method'];
+		if (method === 'GET') {
+			return next.handle().pipe(
+				map((respData) => ({
+					...respData,
+					data: respData.data.map((shortUrl: ShortUrl) => ({
+						id: shortUrl.id,
+						userId: shortUrl.user_id,
+						shortCode: shortUrl.short_code,
+						originalUrl: shortUrl.original_url,
+						expiryDate: shortUrl.expires_at,
+						createdAt: shortUrl.created_at,
+						updatedAt: shortUrl.updated_at,
+					})),
+				})),
+			);
+		}
 		return next.handle().pipe(
 			map((respData) => ({
 				...respData,
