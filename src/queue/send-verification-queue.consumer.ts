@@ -13,6 +13,7 @@ export class VerificationEmailConsumer extends WorkerHost {
 		super();
 	}
 
+	@OnWorkerEvent('active')
 	async process(job: Job): Promise<void> {
 		await this.userService.sendEmailVerification(job.data.email);
 	}
