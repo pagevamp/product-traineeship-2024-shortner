@@ -107,7 +107,7 @@ export class ShortUrlsService {
 		);
 
 		if (new Date() > expires_at) {
-			templateData.data = await this.template.expiredTemplate(shortURL);
+			templateData.data = await this.template.expiredTemplate();
 			return templateData;
 		}
 		const url = original_url.includes('https') ? original_url : `https://${original_url}`;

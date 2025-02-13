@@ -14,6 +14,7 @@ import {
 	Version,
 	VERSION_NEUTRAL,
 	UseGuards,
+	UseInterceptors,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ShortUrlsService } from '@/short-urls/short-urls.service';
@@ -24,20 +25,22 @@ import { User } from '@/users/entities/user.entity';
 import { successMessage } from '@/common/messages';
 import { Avoid } from '@/decorator/avoid-guard.decorator';
 import { ShortUrl } from '@/short-urls/entities/short-url.entity';
-import { UpdateShortUrlDto } from '@/short-urls/dto/update-short-url.dto';
+import { CustomShortURLInterceptor } from '@/short-urls/interceptor/url.interceptor';
 
 @UseGuards(AuthGuard)
 @Controller()
 export class ShortUrlsController {
 	constructor(private readonly shortUrlsService: ShortUrlsService) {}
 	@Post('urls')
+	@UseInterceptors(CustomShortURLInterceptor)
 	@HttpCode(HttpStatus.CREATED)
-	async create(@Req() req: Request, @Body() createShortUrlDto: CreateShortUrlDto): Promise<SuccessResponse> {
+	async create(@Req() req: Request, @Body() createShortUrlDto: CreateShortUrlDto): Promise<GetMethodResponse> {
 		const user = req.user as User;
-		await this.shortUrlsService.createShortUrl(user, createShortUrlDto);
+		const shortURL = await this.shortUrlsService.createShortUrl(user, createShortUrlDto);
 		return {
 			status: HttpStatus.CREATED,
 			message: successMessage.shortUrlCreated,
+			data: [shortURL],
 		};
 	}
 

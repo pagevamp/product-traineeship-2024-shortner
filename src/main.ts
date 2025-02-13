@@ -13,7 +13,16 @@ async function bootstrap(): Promise<void> {
 	const port = env.APP_PORT;
 	try {
 		const app = await NestFactory.create<NestExpressApplication>(AppModule);
-		app.use(helmet());
+		app.use(
+			helmet({
+				contentSecurityPolicy: {
+					directives: {
+						defaultSrc: ["'self'"],
+						scriptSrc: ["'self'", "'unsafe-inline'"],
+					},
+				},
+			}),
+		);
 		app.enableCors({
 			origin: env.CORS_ORIGIN,
 			credentials: true,

@@ -39,7 +39,7 @@ export class UsersService {
 		}
 		const passwordHash = await hash(createUserDto.password, env.SALT_ROUND);
 		const user = { ...createUserDto, password_hash: passwordHash };
-		const createdUser = (await this.userRepository.insert(user)).generatedMaps[0];
+		const createdUser = await this.userRepository.save(user);
 		if (!createdUser) {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
@@ -118,6 +118,7 @@ export class UsersService {
 			subject: signupOtpMailTemplate.subject,
 			to: [{ name: user.name, address: user.email }],
 			html: signupOtpMailTemplate.body(otp, user.name),
+			text: signupOtpMailTemplate.text(otp, user.name),
 		});
 	}
 
