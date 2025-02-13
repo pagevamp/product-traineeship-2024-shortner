@@ -7,11 +7,18 @@ import { VerificationModule } from '@/verification/verification.module';
 import { MailerModule } from '@/mailer/mailer.module';
 import { RateLimitMiddlewareFactory } from '@/middleware/rate-limit.middleware';
 import { authRateLimiter, otpVerificationRateLimiter } from '@/config/rateLimit.config';
+import { BullModule } from '@nestjs/bullmq';
+import { VerificationEmailConsumer } from '@/queue/send-verification-queue.consumer';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([User]), VerificationModule, MailerModule],
+	imports: [
+		TypeOrmModule.forFeature([User]),
+		VerificationModule,
+		MailerModule,
+		BullModule.registerQueue({ name: 'sendVerificationMail' }),
+	],
 	controllers: [UsersController],
-	providers: [UsersService],
+	providers: [UsersService, VerificationEmailConsumer],
 	exports: [UsersService],
 })
 export class UsersModule implements NestModule {

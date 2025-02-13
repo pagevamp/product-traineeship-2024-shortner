@@ -18,6 +18,8 @@ import { signupOtpMailTemplate } from '@/template/email.template';
 import { VerifyUserDto } from '@/users/dto/verify-user.dto';
 import { SendVerificationDto } from '@/users/dto/send-verification.dto';
 import { LoggerService } from '@/logger/logger.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { UpdateUserDto } from '@/users/dto/update-user.dto';
 import { UpdatePasswordDto } from '@/users/dto/update-password.dto';
 @Injectable()
@@ -28,6 +30,7 @@ export class UsersService {
 		private userRepository: Repository<User>,
 		private otpVerificationService: VerificationService,
 		private emailService: MailerService,
+		@InjectQueue('sendVerificationMail') private readonly queueService: Queue,
 	) {}
 	async create(createUserDto: CreateUserDto): Promise<User> {
 		const userExists = await this.userRepository.findOneBy({ email: createUserDto.email });
@@ -41,7 +44,13 @@ export class UsersService {
 			throw new TypeORMError(errorMessage.userCreationFailure);
 		}
 		this.logger.log(`New user ${createUserDto.name} created`);
-		await this.sendEmailVerification({ email: user.email });
+		await this.queueService.add(
+			'sendVerificationMail',
+			{
+				email: user.email,
+			},
+			{ removeOnComplete: true, delay: 5000, attempts: 5 },
+		);
 		return createdUser as User;
 	}
 
